@@ -7,15 +7,22 @@
 #ifndef SRC_PORTS_H_
 #define SRC_PORTS_H_
 
+// PDP CAN bus ID -- Must be ID 0 for WPILib to be able to read the current
+  static constexpr int kPDPChannel        = 0;
+
+// Miscellaneous CAN IDs
+  static constexpr int kCanifierChannel   = 6;
+  static constexpr int kPigeonChannel     = 9;
+
 // Motor Controllers
   static constexpr int kFrontLeftChannel  = 1;
   static constexpr int kRearLeftChannel   = 2;
   static constexpr int kFrontRightChannel = 3;
   static constexpr int kRearRightChannel  = 4;
-  static constexpr int kBallIntakeChannel = 5;
+  static constexpr int kBallIntakeChannel = 14;
+  static constexpr int kLiftChannel       = 15;
+  static constexpr int kTippingChannel    = 16;
 
-// PDP CAN bus ID -- Must be ID 0 for WPILib to be able to read the current
-  static constexpr int kPDPChannel = 0;
 
 // PCM 0 Solenoid Assignments
   static constexpr int kPCM0CANID    = 10;
