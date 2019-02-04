@@ -1,10 +1,10 @@
 /**
- * Climber.h
+ * TipperEndEffector.h
  *
  *  Created on: Jan 21, 2019
  *      Author: Mike A.
  */
-#ifndef SRC_CLIMBER_H_
-#define SRC_CLIMBER_H_
+#ifndef SRC_TIPPER_H_
+#define SRC_TIPPER_H_
 
-#endif /* SRC_CLIMBER_H_ */
+#endif /* SRC_TIPPER_H_ */

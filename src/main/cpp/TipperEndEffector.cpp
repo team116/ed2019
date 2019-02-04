@@ -1,8 +1,8 @@
 /**
- * Climber.cpp
+ * TipperEndEffector.cpp
  *
  *  Created on: Jan 21, 2019
  *      Author: Mike A.
  */
-#include <Climber.h>
+#include <TipperEndEffector.h>
 #include "Ports.h"
