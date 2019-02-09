@@ -61,7 +61,9 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {}
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  m_robotDrive.DriveCartesian(m_stick.GetX(), -m_stick.GetY(), m_stick.GetZ());
+}
 
 void Robot::TestPeriodic() {}
 
