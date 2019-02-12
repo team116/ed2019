@@ -7,4 +7,13 @@
 #ifndef SRC_HATCHENDEFFECTOR_H_
 #define SRC_HATCHENDEFFECTOR_H_
 
+class HatchEndEffector {
+public:
+    static HatchEndEffector* getInstance();
+
+private:
+    HatchEndEffector();
+    static HatchEndEffector* INSTANCE;
+};
+
 #endif /* SRC_HATCHENDEFFECTOR_H_ */

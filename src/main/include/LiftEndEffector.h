@@ -7,4 +7,13 @@
 #ifndef SRC_LIFTENDEFFECTOR_H_
 #define SRC_LIFTENDEFFECTOR_H_
 
+class LiftEndEffector {
+public:
+    static LiftEndEffector* getInstance();
+
+private:
+    LiftEndEffector();
+    static LiftEndEffector* INSTANCE;
+};
+
 #endif /* SRC_LIFTENDEFFECTOR_H_ */
