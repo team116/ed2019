@@ -59,10 +59,14 @@ void Robot::AutonomousPeriodic() {
   }
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
+  m_FrontLeftMotor.
+}
 
 void Robot::TeleopPeriodic() {
-  m_robotDrive.DriveCartesian(m_stick.GetX(), -m_stick.GetY(), m_stick.GetZ());
+  m_robotDrive.DriveCartesian(m_stick.GetX(frc::GenericHID::JoystickHand::kRightHand), 
+                             -m_stick.GetY(frc::GenericHID::JoystickHand::kRightHand), 
+                              m_stick.GetX(frc::GenericHID::JoystickHand::kLeftHand));
 }
 
 void Robot::TestPeriodic() {}
