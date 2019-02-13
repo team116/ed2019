@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <oi.h>
 
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
@@ -60,13 +61,19 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
+  try {
+    oi = OI::getInstance();
+  } catch(std::exception& e) {
+			frc::DriverStation::ReportError("Error initializing Log");
+			frc::DriverStation::ReportError(e.what());
+		}
   
 }
 
 void Robot::TeleopPeriodic() {
-  m_robotDrive.DriveCartesian(m_stick.GetX(frc::GenericHID::JoystickHand::kRightHand), 
-                             -m_stick.GetY(frc::GenericHID::JoystickHand::kRightHand), 
-                              m_stick.GetX(frc::GenericHID::JoystickHand::kLeftHand));
+  m_robotDrive.DriveCartesian(oi->xbox0->GetX(frc::GenericHID::JoystickHand::kRightHand), 
+                             -oi->xbox0->GetY(frc::GenericHID::JoystickHand::kRightHand), 
+                              oi->xbox0->GetX(frc::GenericHID::JoystickHand::kLeftHand));
 }
 
 void Robot::TestPeriodic() {}

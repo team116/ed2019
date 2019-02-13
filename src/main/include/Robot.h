@@ -16,7 +16,9 @@
 #include <frc/XboxController.h>
 #include <frc/GenericHID.h>
 #include <ctre/phoenix.h>
+#include <frc/DriverStation.h>
 #include "Ports.h"
+#include <oi.h>
 
 
 class Robot : public frc::TimedRobot {
@@ -33,6 +35,9 @@ class Robot : public frc::TimedRobot {
  
 // ========================== Device Instances =============================
 
+// Instances
+  OI* oi;
+  
 // Driver Station related
   frc::SendableChooser<std::string> m_chooser;
   const std::string kAutoNameDefault = "Default";
@@ -40,26 +45,21 @@ class Robot : public frc::TimedRobot {
   std::string m_autoSelected;
 
 // CAN-based Motor Controllers
-  WPI_TalonSRX m_FrontLeftMotor{kFrontLeftChannel};
-  WPI_TalonSRX m_RearLeftMotor{kRearLeftChannel};
-  WPI_TalonSRX m_FrontRightMotor{kFrontRightChannel};
-  WPI_TalonSRX m_RearRightMotor{kRearRightChannel};
+  WPI_TalonSRX m_FrontLeftMotor{RobotPorts::kFrontLeftChannel};
+  WPI_TalonSRX m_RearLeftMotor{RobotPorts::kRearLeftChannel};
+  WPI_TalonSRX m_FrontRightMotor{RobotPorts::kFrontRightChannel};
+  WPI_TalonSRX m_RearRightMotor{RobotPorts::kRearRightChannel};
 
-  WPI_TalonSRX m_BallIntake{kBallIntakeChannel};
-
-// Speed Controller Groups for ganging controllers in Tandem 
-  //frc::SpeedControllerGroup m_left{m_FrontLeftMotor, m_RearLeftMotor};
-  //frc::SpeedControllerGroup m_right{m_FrontRightMotor, m_RearRightMotor};
-
+  WPI_TalonSRX m_BallIntake{RobotPorts::kBallIntakeChannel};
 
 // Mecanum Drive Robot Declaration
-  frc::MecanumDrive m_robotDrive{m_FrontLeftMotor, m_RearLeftMotor, m_FrontRightMotor,m_RearRightMotor};
+  frc::MecanumDrive m_robotDrive{m_FrontLeftMotor, m_RearLeftMotor, m_FrontRightMotor, m_RearRightMotor};
 
 // Joysticks on the OI -- Includes all of the for buttons, etc.
-  frc::XboxController m_stick{kXboxChannel};
-  frc::Joystick joy1{kJoystickChannel1};
-  frc::Joystick joy2{kJoystickChannel2};
-  frc::Joystick joy3{kJoystickChannel3};
-  frc::Joystick joy4{kJoystickChannel4};
+//  frc::XboxController m_stick{kXboxChannel};
+//  frc::Joystick joy1{kJoystickChannel1};
+//  frc::Joystick joy2{kJoystickChannel2};
+//  frc::Joystick joy3{kJoystickChannel3};
+//  frc::Joystick joy4{kJoystickChannel4};
 
 };

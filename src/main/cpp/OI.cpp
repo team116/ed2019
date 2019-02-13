@@ -11,6 +11,10 @@ OI* OI::INSTANCE = nullptr;
 
 OI::OI() {
     // put initialization code into the constructor
+    	xbox0      = new frc::XboxController(OIPorts::kXboxChannel);
+        buttonBox1 = new frc::Joystick(OIPorts::kJoystickChannel1);
+        buttonBox2 = new frc::Joystick(OIPorts::kJoystickChannel2);
+        buttonBox3 = new frc::Joystick(OIPorts::kJoystickChannel3);
 }
 
 OI* OI::getInstance() {
