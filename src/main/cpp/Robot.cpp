@@ -9,9 +9,6 @@
 
 #include <iostream>
 
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <oi.h>
-
 void Robot::RobotInit() {
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
   m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
@@ -61,10 +58,18 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
+  // Get the OI instance
   try {
     oi = OI::getInstance();
   } catch(std::exception& e) {
-			frc::DriverStation::ReportError("Error initializing Log");
+			frc::DriverStation::ReportError("Error initializing OI object");
+			frc::DriverStation::ReportError(e.what());
+		}
+  // Get the LiftEndEffector instance
+  try {
+    oi = OI::getInstance();
+  } catch(std::exception& e) {
+			frc::DriverStation::ReportError("Error initializing OI object");
 			frc::DriverStation::ReportError(e.what());
 		}
   

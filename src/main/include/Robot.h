@@ -11,14 +11,19 @@
 
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/drive/MecanumDrive.h>
 #include <frc/Joystick.h>
 #include <frc/XboxController.h>
 #include <frc/GenericHID.h>
 #include <ctre/phoenix.h>
 #include <frc/DriverStation.h>
-#include "Ports.h"
+#include <Ports.h>
 #include <oi.h>
+#include <CargoEndEffector.h>
+#include <HatchEndEffector.h>
+#include <LiftEndEffector.h>
+#include <TipperEndEffector.h>
 
 
 class Robot : public frc::TimedRobot {
@@ -37,6 +42,10 @@ class Robot : public frc::TimedRobot {
 
 // Instances
   OI* oi;
+  LiftEndEffector*   lift;
+  CargoEndEffector*  cargo;
+  HatchEndEffector*  hatch;
+  TipperEndEffector* tipper;
   
 // Driver Station related
   frc::SendableChooser<std::string> m_chooser;
