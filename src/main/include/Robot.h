@@ -24,6 +24,7 @@
 #include <HatchEndEffector.h>
 #include <LiftEndEffector.h>
 #include <TipperEndEffector.h>
+#include <USBCamera.h>
 
 
 class Robot : public frc::TimedRobot {

@@ -8,6 +8,7 @@
 #include "Ports.h"
 
 OI* OI::INSTANCE = nullptr;
+enum {LEFT, CENTER, RIGHT};
 
 OI::OI() {
     // put initialization code into the constructor
@@ -16,6 +17,7 @@ OI::OI() {
         buttonBox2 = new frc::Joystick(OIPorts::kJoystickChannel2);
         buttonBox3 = new frc::Joystick(OIPorts::kJoystickChannel3);
 }
+
 
 OI* OI::getInstance() {
     if (INSTANCE == nullptr) {
