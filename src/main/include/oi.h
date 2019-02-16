@@ -16,18 +16,44 @@
 #include <ctre/phoenix.h>
 #include <Ports.h>
 
-class OI {
-public:
-    static OI* getInstance();
+class OI
+{
+  public:
+
+    static OI *getInstance();
+
     frc::XboxController *xbox0;
-    frc::Joystick* buttonBox1;
-    frc::Joystick* buttonBox2;
-    frc::Joystick* buttonBox3;
+    frc::Joystick *buttonBox1;
+    frc::Joystick *buttonBox2;
+    frc::Joystick *buttonBox3;
+    // Driver Station related
 
-private:
+    enum Pos
+    {
+        LEFT,
+        CENTER,
+        RIGHT
+    };
+    frc::SendableChooser<Pos> m_chooser;
+
+    enum Dest
+    {
+        TELEOP,
+        DONOTHING,
+        FRONTCARGO,
+        RIGHTCARGO,
+        LEFTCARGO,
+        RIGHTROCKET,
+        LEFTROCKET
+    };
+    frc::SendableChooser<Dest> m_destination;
+
+    Pos startPosition;
+    Dest destination;
+
+  private:
     OI();
-    static OI* INSTANCE;
-
+    static OI *INSTANCE;
 };
 
 #endif /* SRC_OI_H_ */

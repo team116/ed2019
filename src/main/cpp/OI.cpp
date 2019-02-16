@@ -7,20 +7,21 @@
 #include <OI.h>
 #include "Ports.h"
 
-OI* OI::INSTANCE = nullptr;
-enum {LEFT, CENTER, RIGHT};
+OI *OI::INSTANCE = nullptr;
 
-OI::OI() {
+OI::OI()
+{
     // put initialization code into the constructor
-    	xbox0      = new frc::XboxController(OIPorts::kXboxChannel);
-        buttonBox1 = new frc::Joystick(OIPorts::kJoystickChannel1);
-        buttonBox2 = new frc::Joystick(OIPorts::kJoystickChannel2);
-        buttonBox3 = new frc::Joystick(OIPorts::kJoystickChannel3);
+    xbox0 = new frc::XboxController(OIPorts::kXboxChannel);
+    buttonBox1 = new frc::Joystick(OIPorts::kJoystickChannel1);
+    buttonBox2 = new frc::Joystick(OIPorts::kJoystickChannel2);
+    buttonBox3 = new frc::Joystick(OIPorts::kJoystickChannel3);
 }
 
-
-OI* OI::getInstance() {
-    if (INSTANCE == nullptr) {
+OI *OI::getInstance()
+{
+    if (INSTANCE == nullptr)
+    {
         INSTANCE = new OI();
     }
     return INSTANCE;
