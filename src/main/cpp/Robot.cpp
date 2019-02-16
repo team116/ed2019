@@ -119,23 +119,17 @@ void Robot::AutonomousPeriodic()
                                 -(oi->xbox0->GetY(frc::GenericHID::JoystickHand::kRightHand)),
                                 oi->xbox0->GetX(frc::GenericHID::JoystickHand::kLeftHand));
     break;
-  case OI::Dest::DONOTHING:
-    printf("Do Not Move Selected\n");
+  case OI::Dest::DONOTHING: 
     break;
   case OI::Dest::FRONTCARGO:
-    printf("Front Cargo Selected\n");
     break;
   case OI::Dest::RIGHTCARGO:
-    printf("Right Cargo Selected\n");
     break;
   case OI::Dest::LEFTCARGO:
-    printf("Left Cargo Selected\n");
     break;
   case OI::Dest::RIGHTROCKET:
-    printf("Right Rocket Selected\n");
     break;
   case OI::Dest::LEFTROCKET:
-    printf("Left Rocket Selected\n");
     break;
   default:
     printf("Default Selected\n");
