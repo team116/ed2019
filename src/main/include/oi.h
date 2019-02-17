@@ -21,6 +21,7 @@ class OI
   public:
 
     static OI *getInstance();
+    void process();
 
     frc::XboxController *xbox0;
     frc::Joystick *buttonBox1;

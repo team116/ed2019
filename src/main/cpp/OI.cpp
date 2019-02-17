@@ -18,6 +18,10 @@ OI::OI()
     buttonBox3 = new frc::Joystick(OIPorts::kJoystickChannel3);
 }
 
+void OI::process() {
+
+}
+
 OI *OI::getInstance()
 {
     if (INSTANCE == nullptr)

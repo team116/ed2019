@@ -9,8 +9,31 @@
 
 #include <iostream>
 
-void Robot::RobotInit()
-{
+void Robot::RobotInit() {
+  // Get the OI instance
+  try {
+    oi = OI::getInstance();
+  } catch (std::exception &e) {
+    frc::DriverStation::ReportError("Error initializing OI object");
+    frc::DriverStation::ReportError(e.what());
+  }
+
+  // Get the LiftEndEffector instance
+  try {
+    lift = LiftEndEffector::getInstance();
+  } catch (std::exception &e) {
+    frc::DriverStation::ReportError("Error initializing Lift object");
+    frc::DriverStation::ReportError(e.what());
+  }
+
+  // Camera
+  try {
+    driverCamera = USBCamera::getInstance();
+  } catch (std::exception &e) {
+    frc::DriverStation::ReportError("Error initializing USB Camera object");
+    frc::DriverStation::ReportError(e.what());
+  }
+
   oi->m_chooser.AddOption("Left", oi->Pos::LEFT);
   oi->m_chooser.AddOption("Center", oi->Pos::CENTER);
   oi->m_chooser.AddOption("Right", oi->Pos::RIGHT);
@@ -25,9 +48,10 @@ void Robot::RobotInit()
   oi->m_destination.AddOption("Left Cargo", oi->Dest::LEFTCARGO);
   oi->m_destination.AddOption("Right Rocket", oi->Dest::RIGHTROCKET);
   oi->m_destination.AddOption("Left Rocket", oi->Dest::LEFTROCKET);
-  oi->m_destination.SetDefaultOption("Do Not Move", oi->Dest::DONOTHING);
+  oi->m_destination.SetDefaultOption("Teleop", oi->Dest::TELEOP);
 
   frc::SmartDashboard::PutData("Destination", &oi->m_destination);
+
   // We need to run our vision program in a separate thread. If not, our robot
   // program will not run.
 #if defined(__linux__)
@@ -37,6 +61,8 @@ void Robot::RobotInit()
   wpi::errs() << "Vision only available on Linux.\n";
   wpi::errs().flush();
 #endif
+
+  m_robotDrive.SetSafetyEnabled(false);
 }
 
 /**
@@ -60,128 +86,95 @@ void Robot::RobotPeriodic() {}
  * if-else structure below with additional strings. If using the SendableChooser
  * make sure to add them to the chooser code above as well.
  */
-void Robot::AutonomousInit()
-{
-
+void Robot::AutonomousInit() {
   oi->startPosition = oi->m_chooser.GetSelected();
-  switch (oi->startPosition)
-  {
-  case OI::Pos::LEFT:
-    printf("Left Selected\n");
-    break;
-  case OI::Pos::CENTER:
-    printf("Center Selected\n");
-    break;
-  case OI::Pos::RIGHT:
-    printf("Right Selected\n");
-    break;
-  default:
-    printf("Default Selected\n");
-    break;
+  switch (oi->startPosition) {
+    case OI::Pos::LEFT:
+      printf("Left Selected\n");
+      break;
+    case OI::Pos::CENTER:
+      printf("Center Selected\n");
+      break;
+    case OI::Pos::RIGHT:
+      printf("Right Selected\n");
+      break;
+    default:
+      printf("Default Selected\n");
+      break;
   }
 
   oi->destination = oi->m_destination.GetSelected();
-  switch (oi->destination)
-  {
-  case OI::Dest::TELEOP:
-    printf("Teleop Selected\n");
-    break;
-  case OI::Dest::DONOTHING:
-    printf("Do Not Move Selected\n");
-    break;
-  case OI::Dest::FRONTCARGO:
-    printf("Front Cargo Selected\n");
-    break;
-  case OI::Dest::RIGHTCARGO:
-    printf("Right Cargo Selected\n");
-    break;
-  case OI::Dest::LEFTCARGO:
-    printf("Left Cargo Selected\n");
-    break;
-  case OI::Dest::RIGHTROCKET:
-    printf("Right Rocket Selected\n");
-    break;
-  case OI::Dest::LEFTROCKET:
-    printf("Left Rocket Selected\n");
-    break;
-  default:
-    printf("Default Selected\n");
-    break;
+  switch (oi->destination) {
+    case OI::Dest::TELEOP:
+      printf("Teleop Selected\n");
+      break;
+    case OI::Dest::DONOTHING:
+      printf("Do Not Move Selected\n");
+      break;
+    case OI::Dest::FRONTCARGO:
+      printf("Front Cargo Selected\n");
+      break;
+    case OI::Dest::RIGHTCARGO:
+      printf("Right Cargo Selected\n");
+      break;
+    case OI::Dest::LEFTCARGO:
+      printf("Left Cargo Selected\n");
+      break;
+    case OI::Dest::RIGHTROCKET:
+      printf("Right Rocket Selected\n");
+      break;
+    case OI::Dest::LEFTROCKET:
+      printf("Left Rocket Selected\n");
+      break;
+    default:
+      printf("Default Selected\n");
+      break;
+  }
+
+  try {
+    oi->process();
+  } catch (std::exception &e) {
+    printf("Error in AutonomousInit\n%s", e.what());
   }
 }
 
-void Robot::AutonomousPeriodic()
-{
-  switch (oi->destination)
-  {
-  case OI::Dest::TELEOP:
-    m_robotDrive.DriveCartesian(oi->xbox0->GetX(frc::GenericHID::JoystickHand::kRightHand),
-                                -(oi->xbox0->GetY(frc::GenericHID::JoystickHand::kRightHand)),
-                                oi->xbox0->GetX(frc::GenericHID::JoystickHand::kLeftHand));
-    break;
-  case OI::Dest::DONOTHING: 
-    break;
-  case OI::Dest::FRONTCARGO:
-    break;
-  case OI::Dest::RIGHTCARGO:
-    break;
-  case OI::Dest::LEFTCARGO:
-    break;
-  case OI::Dest::RIGHTROCKET:
-    break;
-  case OI::Dest::LEFTROCKET:
-    break;
-  default:
-    printf("Default Selected\n");
-    break;
+void Robot::AutonomousPeriodic() {
+  switch (oi->destination) {
+    case OI::Dest::TELEOP:
+      m_robotDrive.DriveCartesian(
+          oi->xbox0->GetX(frc::GenericHID::JoystickHand::kRightHand),
+          -(oi->xbox0->GetY(frc::GenericHID::JoystickHand::kRightHand)),
+          oi->xbox0->GetX(frc::GenericHID::JoystickHand::kLeftHand));
+      break;
+    case OI::Dest::DONOTHING:
+      break;
+    case OI::Dest::FRONTCARGO:
+      break;
+    case OI::Dest::RIGHTCARGO:
+      break;
+    case OI::Dest::LEFTCARGO:
+      break;
+    case OI::Dest::RIGHTROCKET:
+      break;
+    case OI::Dest::LEFTROCKET:
+      break;
+    default:
+      printf("Default Selected\n");
+      break;
   }
 }
 
-void Robot::TeleopInit()
-{
-  // Get the OI instance
-  try
-  {
-    oi = OI::getInstance();
-  }
-  catch (std::exception &e)
-  {
-    frc::DriverStation::ReportError("Error initializing OI object");
-    frc::DriverStation::ReportError(e.what());
-  }
-  // Get the LiftEndEffector instance
-  try
-  {
-    oi = OI::getInstance();
-  }
-  catch (std::exception &e)
-  {
-    frc::DriverStation::ReportError("Error initializing OI object");
-    frc::DriverStation::ReportError(e.what());
-  }
-  try
-  {
-    driverCamera = USBCamera::getInstance();
-  }
-  catch (std::exception &e)
-  {
-    frc::DriverStation::ReportError("Error initializing USB Camera object");
-    frc::DriverStation::ReportError(e.what());
-  }
-}
+void Robot::TeleopInit() {}
 
-void Robot::TeleopPeriodic()
-{
-  m_robotDrive.DriveCartesian(oi->xbox0->GetX(frc::GenericHID::JoystickHand::kRightHand),
-                              -(oi->xbox0->GetY(frc::GenericHID::JoystickHand::kRightHand)),
-                              oi->xbox0->GetX(frc::GenericHID::JoystickHand::kLeftHand));
+void Robot::TeleopPeriodic() {
+  m_robotDrive.DriveCartesian(
+      oi->xbox0->GetX(frc::GenericHID::JoystickHand::kRightHand),
+      -(oi->xbox0->GetY(frc::GenericHID::JoystickHand::kRightHand)),
+      oi->xbox0->GetX(frc::GenericHID::JoystickHand::kLeftHand));
 }
 
 void Robot::TestPeriodic() {}
 
 #ifndef RUNNING_FRC_TESTS
-int main()
-{
-  return frc::StartRobot<Robot>();
-}
+int main() { return frc::StartRobot<Robot>(); }
 #endif
