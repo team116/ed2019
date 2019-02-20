@@ -50,12 +50,21 @@ private:
   USBCamera *driverCamera;
 
   // CAN-based Motor Controllers
+#ifdef EDV21  
+  WPI_VictorSPX m_FrontLeftMotor{RobotPorts::kFrontLeftChannel};
+  WPI_VictorSPX m_RearLeftMotor{RobotPorts::kRearLeftChannel};
+  WPI_VictorSPX m_FrontRightMotor{RobotPorts::kFrontRightChannel};
+  WPI_VictorSPX m_RearRightMotor{RobotPorts::kRearRightChannel};
+
+  WPI_VictorSPX m_BallIntake{RobotPorts::kBallIntakeChannel};
+#else
   WPI_TalonSRX m_FrontLeftMotor{RobotPorts::kFrontLeftChannel};
   WPI_TalonSRX m_RearLeftMotor{RobotPorts::kRearLeftChannel};
   WPI_TalonSRX m_FrontRightMotor{RobotPorts::kFrontRightChannel};
   WPI_TalonSRX m_RearRightMotor{RobotPorts::kRearRightChannel};
 
   WPI_TalonSRX m_BallIntake{RobotPorts::kBallIntakeChannel};
+#endif
 
   // Mecanum Drive Robot Declaration
   frc::MecanumDrive m_robotDrive{m_FrontLeftMotor, m_RearLeftMotor, m_FrontRightMotor, m_RearRightMotor};

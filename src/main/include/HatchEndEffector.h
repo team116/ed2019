@@ -6,10 +6,17 @@
  */
 #ifndef SRC_HATCHENDEFFECTOR_H_
 #define SRC_HATCHENDEFFECTOR_H_
+#include <frc/doublesolenoid.h>
+#include <Ports.h>
 
 class HatchEndEffector {
 public:
     static HatchEndEffector* getInstance();
+    frc::DoubleSolenoid hatchEjectorSolenoid {PCM0Ports::kPCM0CANID, PCM0Ports::kPCM0HatchExtend, PCM0Ports::kPCM0HatchRetract};
+
+    void hatchDeploy(); 
+    void hatchRetract(); 
+    void hatchOff();
 
 private:
     HatchEndEffector();

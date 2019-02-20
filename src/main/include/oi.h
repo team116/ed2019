@@ -7,54 +7,94 @@
 #ifndef SRC_OI_H_
 #define SRC_OI_H_
 
-#include <frc/TimedRobot.h>
-#include <frc/smartdashboard/SendableChooser.h>
-#include <frc/drive/MecanumDrive.h>
-#include <frc/Joystick.h>
-#include <frc/XboxController.h>
-#include <frc/GenericHID.h>
-#include <ctre/phoenix.h>
 #include <Ports.h>
+#include <ctre/phoenix.h>
+#include <frc/GenericHID.h>
+#include <frc/Joystick.h>
+#include <frc/TimedRobot.h>
+#include <frc/XboxController.h>
+#include <frc/drive/MecanumDrive.h>
+#include <frc/smartdashboard/SendableChooser.h>
+#include <CargoEndEffector.h>
+#include <HatchEndEffector.h>
+#include <LiftEndEffector.h>
+#include <TipperEndEffector.h>
+#include <USBCamera.h>
 
-class OI
-{
-  public:
 
-    static OI *getInstance();
-    void process();
+class OI {
+ public:
+  static OI *getInstance();
+  void process();
 
-    frc::XboxController *xbox0;
-    frc::Joystick *buttonBox1;
-    frc::Joystick *buttonBox2;
-    frc::Joystick *buttonBox3;
-    // Driver Station related
+  frc::XboxController *xbox0;
+  frc::Joystick *buttonBox1;
+  frc::Joystick *buttonBox2;
+  frc::Joystick *buttonBox3;
 
-    enum Pos
-    {
-        LEFT,
-        CENTER,
-        RIGHT
-    };
-    frc::SendableChooser<Pos> m_chooser;
+  // Disabled sensor state variables
+  bool enableSensor1 = true;
+  bool enableSensor2 = true;
+  bool enableSensor3 = true;
+  bool enableSensor4 = true;
+  bool enableSensor5 = true;
 
-    enum Dest
-    {
-        TELEOP,
-        DONOTHING,
-        FRONTCARGO,
-        RIGHTCARGO,
-        LEFTCARGO,
-        RIGHTROCKET,
-        LEFTROCKET
-    };
-    frc::SendableChooser<Dest> m_destination;
+  // Cargo Bay vs. Rocket lifter state flags
+  bool selectCargoBayPos      = false; // initial state is off
+  bool selectBottomPos        = false; // initial state is off
+  bool selectRocketBottomPos  = false; // initial state is off
+  bool selectRocketMidPos     = false; // initial state is off
+  bool selectRocketTopPos     = false; // initial state is off
 
-    Pos startPosition;
-    Dest destination;
+  // Hatch deploy
+  bool hatchDeploy            = false;
 
-  private:
-    OI();
-    static OI *INSTANCE;
+  // Intake Position state variables
+  bool intakeDeploy           = false;
+
+  // Intake direction state variables
+  bool rollerIntake           = false;
+  bool rollerEject            = false;
+  bool rollerStop             = true;  // begin with stopped roller
+
+  // climb and tip state variables
+  bool robotClimb             = false;
+  bool robotTip               = false;
+
+  // Lifter direction override
+  bool moveLifterUp           = false;
+  bool moveLifterDown         = false;
+
+  // Driver Station related
+  double x, y, rotate;  // Position of joystick inputs
+
+  enum Pos { LEFT, CENTER, RIGHT };
+  frc::SendableChooser<Pos> m_chooser;
+
+  enum Dest {
+    TELEOP,
+    DONOTHING,
+    FRONTCARGO,
+    RIGHTCARGO,
+    LEFTCARGO,
+    RIGHTROCKET,
+    LEFTROCKET
+  };
+  frc::SendableChooser<Dest> m_destination;
+
+  Pos startPosition;
+  Dest destination;
+
+ private:
+  // Instances
+  LiftEndEffector *lift;
+  CargoEndEffector *cargo;
+  HatchEndEffector *hatch;
+  TipperEndEffector *tipper;
+  USBCamera *driverCamera;
+
+  OI();
+  static OI *INSTANCE;
 };
 
 #endif /* SRC_OI_H_ */

@@ -26,6 +26,22 @@ void Robot::RobotInit() {
     frc::DriverStation::ReportError(e.what());
   }
 
+  // Get the TipperEndEffector instance
+  try {
+    tipper = TipperEndEffector::getInstance();
+  } catch (std::exception &e) {
+    frc::DriverStation::ReportError("Error initializing Lift object");
+    frc::DriverStation::ReportError(e.what());
+  }
+
+  // Get the CargoEndEffector instance
+  try {
+    cargo = CargoEndEffector::getInstance();
+  } catch (std::exception &e) {
+    frc::DriverStation::ReportError("Error initializing Lift object");
+    frc::DriverStation::ReportError(e.what());
+  }
+
   // Camera
   try {
     driverCamera = USBCamera::getInstance();
@@ -52,17 +68,9 @@ void Robot::RobotInit() {
 
   frc::SmartDashboard::PutData("Destination", &oi->m_destination);
 
-  // We need to run our vision program in a separate thread. If not, our robot
-  // program will not run.
-#if defined(__linux__)
-  std::thread visionThread(USBCamera::VisionThread);
-  visionThread.detach();
-#else
-  wpi::errs() << "Vision only available on Linux.\n";
-  wpi::errs().flush();
-#endif
 
   m_robotDrive.SetSafetyEnabled(false);
+
 }
 
 /**
@@ -73,7 +81,9 @@ void Robot::RobotInit() {
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic() {
+    m_robotDrive.FeedWatchdog();
+}
 
 /**
  * This autonomous (along with the chooser code above) shows how to select
@@ -141,10 +151,15 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {
   switch (oi->destination) {
     case OI::Dest::TELEOP:
-      m_robotDrive.DriveCartesian(
-          oi->xbox0->GetX(frc::GenericHID::JoystickHand::kRightHand),
-          -(oi->xbox0->GetY(frc::GenericHID::JoystickHand::kRightHand)),
-          oi->xbox0->GetX(frc::GenericHID::JoystickHand::kLeftHand));
+      // read the joystick
+      m_robotDrive.FeedWatchdog();
+      try {
+        oi->process();
+      } catch (std::exception &e) {
+        printf("Error in TeleopPeriodic\n%s", e.what());
+      }
+
+      m_robotDrive.DriveCartesian(oi->x, oi->y, oi->rotate);
       break;
     case OI::Dest::DONOTHING:
       break;
@@ -167,10 +182,14 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-  m_robotDrive.DriveCartesian(
-      oi->xbox0->GetX(frc::GenericHID::JoystickHand::kRightHand),
-      -(oi->xbox0->GetY(frc::GenericHID::JoystickHand::kRightHand)),
-      oi->xbox0->GetX(frc::GenericHID::JoystickHand::kLeftHand));
+  m_robotDrive.FeedWatchdog();
+  try {
+    oi->process();
+  } catch (std::exception &e) {
+    printf("Error in TeleopPeriodic\n%s", e.what());
+  }
+
+  m_robotDrive.DriveCartesian(oi->x, oi->y, oi->rotate);
 }
 
 void Robot::TestPeriodic() {}

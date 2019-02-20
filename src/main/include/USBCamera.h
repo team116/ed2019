@@ -28,7 +28,7 @@ class USBCamera
             frc::CameraServer::GetInstance()->StartAutomaticCapture();
         // Set the resolution
         camera.SetResolution(640, 480);
-
+/*
        // Get a CvSink. This will capture Mats from the Camera
         cs::CvSink cvSink = frc::CameraServer::GetInstance()->GetVideo();
         // Setup a CvSource. This will send images back to the Dashboard
@@ -57,6 +57,7 @@ class USBCamera
             // Give the output stream a new image to display
             outputStream.PutFrame(mat);
         }
+        */
     }
 #endif
 

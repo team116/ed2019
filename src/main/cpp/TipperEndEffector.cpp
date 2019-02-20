@@ -11,6 +11,26 @@ TipperEndEffector* TipperEndEffector::INSTANCE = nullptr;
 
 TipperEndEffector::TipperEndEffector() {
     // put initialization code into the constructor
+    Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kOff);
+    Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kOff);
+}
+
+void TipperEndEffector::tipClimb(double speed) {
+    m_TipperMotor.Set(speed);
+}
+
+void TipperEndEffector::tipOff() {
+    Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kOff); 
+    Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kOff); 
+}
+void TipperEndEffector::tipDeploy() {
+    Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kForward); 
+    Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kForward); 
+}
+
+void TipperEndEffector::tipRetract() {
+    Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kReverse); 
+    Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kReverse); 
 }
 
 TipperEndEffector* TipperEndEffector::getInstance() {
