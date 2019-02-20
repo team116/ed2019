@@ -7,8 +7,8 @@
 #ifndef SRC_CARGOENDEFFECTOR_H_
 #define SRC_CARGOENDEFFECTOR_H_
 #include <Ports.h>
-#include <ctre/phoenix.h>
-#include <frc/doublesolenoid.h>
+#include <ctre/Phoenix.h>
+#include <frc/DoubleSolenoid.h>
 
 class CargoEndEffector {
  public:

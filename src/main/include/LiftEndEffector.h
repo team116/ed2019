@@ -6,7 +6,7 @@
  */
 #ifndef SRC_LIFTENDEFFECTOR_H_
 #define SRC_LIFTENDEFFECTOR_H_
-#include <ctre/phoenix.h>
+#include <ctre/Phoenix.h>
 #include <Ports.h>
 
 class LiftEndEffector {

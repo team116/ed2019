@@ -7,7 +7,7 @@
 #include <CargoEndEffector.h>
 #include <HatchEndEffector.h>
 #include <LiftEndEffector.h>
-#include <OI.h>
+#include <oi.h>
 #include <Ports.h>
 #include <TipperEndEffector.h>
 #include <USBCamera.h>
