@@ -10,9 +10,9 @@
 #include <OI.h>
 #include <Ports.h>
 #include <TipperEndEffector.h>
-#include <USBCamera.h>
 #include <frc/DriverStation.h>
 #include <math.h>
+#include <ctre/Phoenix.h>
 
 OI *OI::INSTANCE = nullptr;
 
@@ -21,7 +21,7 @@ OI::OI() {
   xbox0 = new frc::XboxController(OIPorts::kXboxChannel);
   buttonBox1 = new frc::Joystick(OIPorts::kJoystickChannel1);
   buttonBox2 = new frc::Joystick(OIPorts::kJoystickChannel2);
-  buttonBox3 = new frc::Joystick(OIPorts::kJoystickChannel3);
+
   // Get the LiftEndEffector instance
   try {
     OI::lift = LiftEndEffector::getInstance();
@@ -52,15 +52,7 @@ OI::OI() {
   } catch (std::exception &e) {
     frc::DriverStation::ReportError("Error initializing Lift object");
     frc::DriverStation::ReportError(e.what());
-  }
-
-  // Camera
-  try {
-    OI::driverCamera = USBCamera::getInstance();
-  } catch (std::exception &e) {
-    frc::DriverStation::ReportError("Error initializing USB Camera object");
-    frc::DriverStation::ReportError(e.what());
-  }
+  }  
 }
 
 void OI::process() {
@@ -74,13 +66,14 @@ void OI::process() {
   tempRotate = xbox0->GetX(
       frc::GenericHID::JoystickHand::kLeftHand);  // XBox Lefthand  joystick
   // Cube them to shape the curve while maintaining the sign
-  x = tempX * tempX * tempX;                      // pow(tempX,3);
-  y = tempY * tempY * tempY;                      // pow(tempY,3);
-  rotate = tempRotate * tempRotate * tempRotate;  // pow(tempRotate,3)
+  OI::x = tempX * tempX * tempX;                      // pow(tempX,3);
+  OI::y = tempY * tempY * tempY;                      // pow(tempY,3);
+  OI::rotate = tempRotate * tempRotate * tempRotate;  // pow(tempRotate,3)
 
   // Process the buttons
 
   // Deal with disabled sensors
+
   if (buttonBox1->GetRawButton(OIPorts::kSensor1Enable)) {
     OI::enableSensor1 = true;
   } else {
@@ -168,29 +161,6 @@ void OI::process() {
     OI::moveLifterUp = false;
   }
 
-  // Alternate Move lifter up Xbox Y
-  if (xbox0->GetRawButton(OIPorts::kXboxYButton)) {
-    OI::moveLifterUp = true;
-    OI::moveLifterDown = false;
-  } else {
-    OI::moveLifterUp = false;
-  }
-
-  // Move lifter down
-  if (buttonBox2->GetRawButton(OIPorts::kLifterDown)) {
-    OI::moveLifterDown = true;
-    OI::moveLifterUp = false;
-  } else {
-    OI::moveLifterDown = false;
-  }
-
-  // Alternate Move lifter down on Xbox A
-  if (xbox0->GetRawButton(OIPorts::kXboxAButton)) {
-    OI::moveLifterDown = true;
-    OI::moveLifterUp = false;
-  } else {
-    OI::moveLifterDown = false;
-  }
 
   // Deploy Intake
   if (buttonBox2->GetRawButton(OIPorts::kRollerDeploy)) {
@@ -231,6 +201,31 @@ void OI::process() {
     OI::rollerIntake = false;
     rollerSpeed = buttonBox2->GetX();
     OI::cargo->intakeMovement(CargoEndEffector::Direction::OFF, rollerSpeed);
+  }
+
+    // Move lifter down
+  if (buttonBox2->GetRawButton(OIPorts::kLifterDown)) {
+    OI::moveLifterDown = true;
+    OI::moveLifterUp = false;
+  } else {
+    OI::moveLifterDown = false;
+  }
+
+  // Alternate Move lifter up Xbox Y
+  if (xbox0->GetRawButton(OIPorts::kXboxYButton)) {
+    OI::moveLifterUp = true;
+    OI::moveLifterDown = false;
+  } else {
+    OI::moveLifterUp = false;
+  }
+
+
+  // Alternate Move lifter down on Xbox A
+  if (xbox0->GetRawButton(OIPorts::kXboxAButton)) {
+    OI::moveLifterDown = true;
+    OI::moveLifterUp = false;
+  } else {
+    OI::moveLifterDown = false;
   }
 }
 

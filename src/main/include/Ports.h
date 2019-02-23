@@ -19,13 +19,13 @@ constexpr int kCanifierChannel = 6;
 constexpr int kPigeonChannel = 9;
 
 // Motor Controllers
-constexpr int kFrontLeftChannel = 1;
-constexpr int kRearLeftChannel = 2;
+constexpr int kFrontLeftChannel  = 1;
+constexpr int kRearLeftChannel   = 2;
 constexpr int kFrontRightChannel = 3;
-constexpr int kRearRightChannel = 4;
+constexpr int kRearRightChannel  = 4;
 constexpr int kBallIntakeChannel = 14;
-constexpr int kLiftChannel = 15;
-constexpr int kTippingChannel = 16;
+constexpr int kLiftChannel       = 15;
+constexpr int kTippingChannel    = 16;
 
 // Digital I/O from RoboRIO  --  Be sure the rename these to something more
 // meaningful
@@ -52,15 +52,15 @@ constexpr int kAIChannel3 = 3;
 namespace PCM0Ports {
 
 // PCM 0 Solenoid Assignments
-constexpr int kPCM0CANID = 10;
-constexpr int kPCM0HatchExtend = 2;
-constexpr int kPCM0HatchRetract = 5;
-constexpr int kPCM0CargoIntakeExtend = 3;
+constexpr int kPCM0CANID              = 10;
+constexpr int kPCM0HatchExtend        = 2;
+constexpr int kPCM0HatchRetract       = 5;
+constexpr int kPCM0CargoIntakeExtend  = 3;
 constexpr int kPCM0CargoIntakeRetract = 4;
-constexpr int kPCM0Tipper1Extend = 0;
-constexpr int kPCM0Tipper1Retract = 7;
-constexpr int kPCM0Tipper2Extend = 1;
-constexpr int kPCM0Tipper2Retract = 6;
+constexpr int kPCM0Tipper1Extend      = 0;
+constexpr int kPCM0Tipper1Retract     = 7;
+constexpr int kPCM0Tipper2Extend      = 1;
+constexpr int kPCM0Tipper2Retract     = 6;
 }  // namespace PCM0Ports
 
 namespace PCM1Ports {

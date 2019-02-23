@@ -50,6 +50,14 @@ void Robot::RobotInit() {
     frc::DriverStation::ReportError(e.what());
   }
 
+  // Mobility
+  try {
+    mobility = Mobility::getInstance();
+  } catch (std::exception &e) {
+    frc::DriverStation::ReportError("Error initializing Mobility object");
+    frc::DriverStation::ReportError(e.what());
+  }
+
   oi->m_chooser.AddOption("Left", oi->Pos::LEFT);
   oi->m_chooser.AddOption("Center", oi->Pos::CENTER);
   oi->m_chooser.AddOption("Right", oi->Pos::RIGHT);
@@ -69,7 +77,6 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutData("Destination", &oi->m_destination);
 
 
-  m_robotDrive.SetSafetyEnabled(false);
 
 }
 
@@ -82,7 +89,7 @@ void Robot::RobotInit() {
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
-    m_robotDrive.FeedWatchdog();
+
 }
 
 /**
@@ -152,14 +159,16 @@ void Robot::AutonomousPeriodic() {
   switch (oi->destination) {
     case OI::Dest::TELEOP:
       // read the joystick
-      m_robotDrive.FeedWatchdog();
       try {
         oi->process();
       } catch (std::exception &e) {
         printf("Error in TeleopPeriodic\n%s", e.what());
       }
-
-      m_robotDrive.DriveCartesian(oi->x, oi->y, oi->rotate);
+      try {
+        mobility->process();
+      } catch (std::exception &e) {
+        printf("Error in TeleopPeriodic\n%s", e.what());
+      }
       break;
     case OI::Dest::DONOTHING:
       break;
@@ -182,14 +191,18 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-  m_robotDrive.FeedWatchdog();
   try {
     oi->process();
   } catch (std::exception &e) {
-    printf("Error in TeleopPeriodic\n%s", e.what());
+    printf("Error in OI -- TeleopPeriodic\n%s", e.what());
   }
 
-  m_robotDrive.DriveCartesian(oi->x, oi->y, oi->rotate);
+  try {
+    mobility->process();
+  } catch (std::exception &e) {
+    printf("Error in Mobility -- TeleopPeriodic\n%s", e.what());
+  }
+
 }
 
 void Robot::TestPeriodic() {}
