@@ -9,8 +9,16 @@
     "**/.DS_Store": true,
     "bin/": true,
     ".classpath": true,
-    ".project": true
+    ".project": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
   },
+<<<<<<< HEAD
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "C_Cpp.intelliSenseEngineFallback": "Disabled"
+=======
+  "C_Cpp.intelliSenseEngineFallback": "Enabled"
+>>>>>>> 62237aa3f4e725c10a654285313e360729da35c0
 }

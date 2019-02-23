@@ -6,7 +6,7 @@
  */
 #ifndef SRC_HATCHENDEFFECTOR_H_
 #define SRC_HATCHENDEFFECTOR_H_
-#include <frc/doublesolenoid.h>
+#include <frc/DoubleSolenoid.h>
 #include <Ports.h>
 
 class HatchEndEffector {

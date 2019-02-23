@@ -17,7 +17,7 @@
 #include <frc/Joystick.h>
 #include <frc/XboxController.h>
 #include <frc/GenericHID.h>
-#include <ctre/phoenix.h>
+#include <ctre/Phoenix.h>
 #include <frc/DriverStation.h>
 #include <frc/MotorSafety.h>
 #include <Ports.h>

@@ -8,7 +8,7 @@
 #define SRC_TIPPER_H_
 #include <frc/DoubleSolenoid.h>
 #include <Ports.h>
-#include <ctre/phoenix.h>
+#include <ctre/Phoenix.h>
 
 class TipperEndEffector {
  public:

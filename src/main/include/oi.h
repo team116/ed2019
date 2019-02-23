@@ -8,7 +8,7 @@
 #define SRC_OI_H_
 
 #include <Ports.h>
-#include <ctre/phoenix.h>
+#include <ctre/Phoenix.h>
 #include <frc/GenericHID.h>
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
