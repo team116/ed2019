@@ -75,9 +75,6 @@ void Robot::RobotInit() {
   oi->m_destination.SetDefaultOption("Teleop", oi->Dest::TELEOP);
 
   frc::SmartDashboard::PutData("Destination", &oi->m_destination);
-
-
-
 }
 
 /**
@@ -88,9 +85,7 @@ void Robot::RobotInit() {
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() {
-
-}
+void Robot::RobotPeriodic() {}
 
 /**
  * This autonomous (along with the chooser code above) shows how to select
@@ -191,18 +186,19 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-  try {
-    oi->process();
-  } catch (std::exception &e) {
-    printf("Error in OI -- TeleopPeriodic\n%s", e.what());
-  }
+  while (IsOperatorControl() && IsEnabled()) {
+    try {
+      oi->process();
+    } catch (std::exception &e) {
+      printf("Error in OI -- TeleopPeriodic\n%s", e.what());
+    }
 
-  try {
-    mobility->process();
-  } catch (std::exception &e) {
-    printf("Error in Mobility -- TeleopPeriodic\n%s", e.what());
+    try {
+      mobility->process();
+    } catch (std::exception &e) {
+      printf("Error in Mobility -- TeleopPeriodic\n%s", e.what());
+    }
   }
-
 }
 
 void Robot::TestPeriodic() {}

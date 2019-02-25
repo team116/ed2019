@@ -15,6 +15,7 @@
 #include <frc/XboxController.h>
 #include <frc/drive/MecanumDrive.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/DriverStation.h>
 #include <CargoEndEffector.h>
 #include <HatchEndEffector.h>
 #include <LiftEndEffector.h>
@@ -26,6 +27,7 @@ class OI {
  public:
   static OI *getInstance();
   void process();
+
 
   frc::XboxController *xbox0;
   frc::Joystick *buttonBox1;
@@ -92,6 +94,8 @@ class OI {
   HatchEndEffector *hatch;
   TipperEndEffector *tipper;
   USBCamera *driverCamera;
+  frc::DriverStation&  ds = frc::DriverStation::GetInstance();
+
 
   OI();
   static OI *INSTANCE;
