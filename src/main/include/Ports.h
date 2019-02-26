@@ -29,17 +29,17 @@ constexpr int kTippingChannel    = 16;
 
 // Digital I/O from RoboRIO  --  Be sure the rename these to something more
 // meaningful
-constexpr int kDIOChannel0 = 0;
-constexpr int kDIOChannel1 = 1;
-constexpr int kDIOChannel2 = 2;
-constexpr int kDIOChannel3 = 3;
-constexpr int kDIOChannel4 = 4;
-constexpr int kDIOChannel5 = 5;
-constexpr int kDIOChannel6 = 6;
-constexpr int kDIOChannel7 = 7;
-constexpr int kDIOChannel8 = 8;
-constexpr int kDIOChannel9 = 9;
-constexpr int kDIOChannel10 = 10;
+constexpr int kBottomLimSw     = 0;  
+constexpr int kLiftLimSw       = 1;
+constexpr int kBallIntakeLimSw = 2;
+constexpr int kElevatorLimSw   = 3;
+constexpr int kDIOChannel4     = 4;
+constexpr int kDIOChannel5     = 5;
+constexpr int kDIOChannel6     = 6;
+constexpr int kDIOChannel7     = 7;
+constexpr int kDIOChannel8     = 8;
+constexpr int kDIOChannel9     = 9;
+constexpr int kDIOChannel10    = 10;
 
 // Analog Inputs
 constexpr int kAIChannel0 = 0;

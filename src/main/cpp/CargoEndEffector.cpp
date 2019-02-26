@@ -4,8 +4,9 @@
  *  Created on: Jan 21, 2019
  *      Author: Mike A.
  */
-#include <CargoEndEffector.h>
 #include <frc/DoubleSolenoid.h>
+#include <frc/DigitalInput.h>
+#include <CargoEndEffector.h>
 #include <stdio.h>
 #include "Ports.h"
 
@@ -14,6 +15,7 @@ CargoEndEffector* CargoEndEffector::INSTANCE = nullptr;
 CargoEndEffector::CargoEndEffector() {
     // put initialization code into the constructor
     CargoIntakeSolenoid.Set(frc::DoubleSolenoid::kOff);
+    CargoEndEffector::cargoLS = new frc::DigitalInput(RobotPorts::kBallIntakeLimSw);
 }
 
 void CargoEndEffector::intakeMovement(Direction direction, double speed) {

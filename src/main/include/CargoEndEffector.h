@@ -6,6 +6,7 @@
  */
 #ifndef SRC_CARGOENDEFFECTOR_H_
 #define SRC_CARGOENDEFFECTOR_H_
+#include <frc/DigitalInput.h>
 #include <Ports.h>
 #include <ctre/Phoenix.h>
 #include <frc/DoubleSolenoid.h>
@@ -31,6 +32,8 @@ class CargoEndEffector {
   void intakeRetract();
   void intakeMovement(Direction direction, double speed);
   void intakeOff();
+
+  frc::DigitalInput *cargoLS;
 
  private:
   CargoEndEffector();

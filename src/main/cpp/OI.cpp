@@ -71,146 +71,134 @@ void OI::process() {
   // We do this because a series of getRawButton calls is taking more time than
   // the 20ms for some reason
   //
-  xboxButtons       = ds.GetStickButtons(OIPorts::kXboxChannel);
+  xboxButtons = ds.GetStickButtons(OIPorts::kXboxChannel);
   buttonBox1Buttons = ds.GetStickButtons(OIPorts::kJoystickChannel1);
   buttonBox2Buttons = ds.GetStickButtons(OIPorts::kJoystickChannel2);
 
   // Deal with disabled sensors
   if (buttonBox1Buttons && 0x1f) {  // are any of the disable sensors on?
-    // The answer should be no for any of them
-    // This uses an ugly assignment with knowledge that the bool type is actually an int under the hood
-      OI::enableSensor1 = (buttonBox1Buttons && 0x1);   // 1 bit
-      OI::enableSensor2 = (buttonBox1Buttons && 0x2);   // 2 bit
-      OI::enableSensor3 = (buttonBox1Buttons && 0x4);   // 3 bit
-      OI::enableSensor4 = (buttonBox1Buttons && 0x8);   // 4 bit
-      OI::enableSensor5 = (buttonBox1Buttons && 0x10);  // 5 bit
+                                    // The answer should be no for any of them
+    // This uses an ugly assignment with knowledge that the bool type is
+    // actually an int under the hood
+    OI::enableSensor1 = (buttonBox1Buttons && 0x1);   // 1 bit
+    OI::enableSensor2 = (buttonBox1Buttons && 0x2);   // 2 bit
+    OI::enableSensor3 = (buttonBox1Buttons && 0x4);   // 3 bit
+    OI::enableSensor4 = (buttonBox1Buttons && 0x8);   // 4 bit
+    OI::enableSensor5 = (buttonBox1Buttons && 0x10);  // 5 bit
   }
 
   // Deal with selecting cargo bays vs. rocket lifter positions
-  if (buttonBox1->GetRawButton(OIPorts::kCargoBay)) {
-    OI::selectCargoBayPos = true;
-  } else {
-    OI::selectCargoBayPos = false;
-  }
+  OI::selectCargoBayPos = (buttonBox1Buttons && (1 << OIPorts::kCargoBay));
 
   // take lifter to the bottom
-  if (buttonBox1->GetRawButton(OIPorts::kLifterBottom)) {
-    OI::selectBottomPos = true;
-  } else {
-    OI::selectBottomPos = false;
-  }
+  OI::selectBottomPos = (buttonBox1Buttons && (1 << OIPorts::kLifterBottom));
 
   // take lifter to the bottom
-  if (buttonBox1->GetRawButton(OIPorts::kRobotTipOver)) {
+  if (buttonBox1Buttons && (1 << OIPorts::kRobotTipOver)) {
     OI::robotTip = true;
     OI::tipper->tipDeploy();
   } else {
-    OI::robotTip = false;
-    OI::tipper->tipRetract();
+    if (OI::robotTip) {  // only retract if the tipper was previously deployed
+      OI::robotTip = false;
+      OI::tipper->tipRetract();
+    }
   }
 
-// take lifter to the rocket bottom
-if (buttonBox1->GetRawButton(OIPorts::kRocketBottomPos)) {
-  OI::selectRocketBottomPos = true;
-} else {
-  OI::selectRocketBottomPos = false;
-}
+  // take lifter to the rocket bottom
+  OI::selectRocketBottomPos = (buttonBox1Buttons && (1 << OIPorts::kRocketBottomPos));
 
-// take lifter to the rocket mid
-if (buttonBox1->GetRawButton(OIPorts::kRocketMidPos)) {
-  OI::selectRocketMidPos = true;
-} else {
-  OI::selectRocketMidPos = false;
-}
+  // take lifter to the rocket mid
+  OI::selectRocketMidPos = (buttonBox1Buttons && (1 << OIPorts::kRocketMidPos));
 
-// take lifter to the rocket top
-if (buttonBox1->GetRawButton(OIPorts::kRocketTopPos)) {
-  OI::selectRocketTopPos = true;
-} else {
-  OI::selectRocketTopPos = false;
-}
+  // take lifter to the rocket top
+  OI::selectRocketTopPos = (buttonBox1Buttons && (1 << OIPorts::kRocketTopPos));
 
-// take lifter to the rocket top
-if (buttonBox1->GetRawButton(OIPorts::kRobotClimb)) {
-  OI::robotClimb = true;
-  tipper->tipClimb(0.5);
-} else {
-  tipper->tipClimb(0.0);
-  OI::robotClimb = false;
-}
+  // Start the climb
+  if (buttonBox1Buttons && (1 << OIPorts::kRobotClimb)) {
+    OI::robotClimb = true;
+    tipper->tipClimb(0.5);
+  } else {
+    tipper->tipClimb(0.0);
+    OI::robotClimb = false;
+  }
 
-// Move lifter up
-if (buttonBox2->GetRawButton(OIPorts::kLifterUp)) {
-  OI::moveLifterUp = true;
-  OI::moveLifterDown = false;
-} else {
-  OI::moveLifterUp = false;
-}
+  // Move lifter up
+  if (buttonBox2Buttons && (1 << OIPorts::kLifterUp)) {
+    OI::moveLifterUp = true;
+    OI::moveLifterDown = false;
+  } else {
+    OI::moveLifterUp = false;
+  }
+  // Alternate Move lifter up Xbox Y
+  if (xboxButtons && (1 << OIPorts::kXboxYButton)) {
+    OI::moveLifterUp = true;
+    OI::moveLifterDown = false;
+  } else {
+    OI::moveLifterUp = false;
+  }
 
-// Deploy Intake
-if (buttonBox2->GetRawButton(OIPorts::kRollerDeploy)) {
-  OI::intakeDeploy = true;
-  OI::cargo->intakeDeploy();
-} else {
-  OI::intakeDeploy = false;
-  OI::cargo->intakeRetract();
-}
+  // Move lifter down
+  if (buttonBox2Buttons && (1 << OIPorts::kLifterDown)) {
+    OI::moveLifterDown = true;
+    OI::moveLifterUp = false;
+  } else {
+    OI::moveLifterDown = false;
+  }
 
-// Deploy Hatch
-if (buttonBox2->GetRawButton(OIPorts::kHatchDeploy)) {
-  OI::hatchDeploy = true;
-  OI::hatch->hatchDeploy();
-} else {
-  OI::hatchDeploy = false;
-  OI::hatch->hatchRetract();
-}
+  // Alternate Move lifter down on Xbox A
+  if (xboxButtons && (1 << OIPorts::kXboxAButton)) {
+    OI::moveLifterDown = true;
+    OI::moveLifterUp = false;
+  } else {
+    OI::moveLifterDown = false;
+  }
 
-// Roller Direction IN
-if (buttonBox2->GetRawButton(OIPorts::kCargoIn)) {
-  OI::rollerIntake = true;
-  OI::rollerEject = false;
-  rollerSpeed = buttonBox2->GetX();
-  OI::cargo->intakeMovement(CargoEndEffector::Direction::INTAKE, rollerSpeed);
-}
+  // Deploy Intake
+  if (buttonBox2Buttons && (1 << OIPorts::kRollerDeploy)) {
+    OI::intakeDeploy = true;
+    OI::cargo->intakeDeploy();
+  } else {
+    if (OI::intakeDeploy) {  // retract only if previously deployed
+      OI::intakeDeploy = false;
+      OI::cargo->intakeRetract();
+    }
+  }
 
-if (buttonBox2->GetRawButton(OIPorts::kCargoOut)) {
-  OI::rollerEject = true;
-  OI::rollerIntake = false;
-  rollerSpeed = buttonBox2->GetX();
-  OI::cargo->intakeMovement(CargoEndEffector::Direction::INTAKE, rollerSpeed);
-}
+  // Deploy Hatch
+  if (buttonBox2Buttons && (1 << OIPorts::kHatchDeploy)) {
+    if (!OI::hatchDeploy) {
+      OI::hatch->hatchDeploy();
+      OI::hatchDeploy = true;
+    }
+  } else {
+    if (OI::hatchDeploy) {  // retract only if previously deployed
+      OI::hatchDeploy = false;
+      OI::hatch->hatchRetract();
+    }
+  }
 
-if (!(buttonBox2->GetRawButton(OIPorts::kCargoOut)) &&
-    !(buttonBox2->GetRawButton(OIPorts::kCargoIn))) {
-  OI::rollerEject = false;
-  OI::rollerIntake = false;
-  rollerSpeed = buttonBox2->GetX();
-  OI::cargo->intakeMovement(CargoEndEffector::Direction::OFF, rollerSpeed);
-}
+  // Roller Direction IN
+  if (buttonBox2Buttons && (1 << OIPorts::kCargoIn)) {
+    OI::rollerIntake = true;
+    OI::rollerEject = false;
+    rollerSpeed = buttonBox2->GetX();  // Get speed from rotary switch
+    OI::cargo->intakeMovement(CargoEndEffector::Direction::INTAKE, rollerSpeed);
+  }
 
-// Move lifter down
-if (buttonBox2->GetRawButton(OIPorts::kLifterDown)) {
-  OI::moveLifterDown = true;
-  OI::moveLifterUp = false;
-} else {
-  OI::moveLifterDown = false;
-}
+  // Roller direction Out
+  if (buttonBox2Buttons && (1 << OIPorts::kCargoOut)) {
+    OI::rollerEject = true;
+    OI::rollerIntake = false;
+    rollerSpeed = buttonBox2->GetX(); // Get speed from rotary switch
+    OI::cargo->intakeMovement(CargoEndEffector::Direction::INTAKE, rollerSpeed);
+  }
 
-// Alternate Move lifter up Xbox Y
-if (xbox0->GetRawButton(OIPorts::kXboxYButton)) {
-  OI::moveLifterUp = true;
-  OI::moveLifterDown = false;
-} else {
-  OI::moveLifterUp = false;
-}
-
-// Alternate Move lifter down on Xbox A
-if (xbox0->GetRawButton(OIPorts::kXboxAButton)) {
-  OI::moveLifterDown = true;
-  OI::moveLifterUp = false;
-} else {
-  OI::moveLifterDown = false;
-}
+  // Stop roller
+  if (OI::rollerIntake || OI::rollerEject) {
+    OI::rollerEject = false;
+    OI::rollerIntake = false;
+    OI::cargo->intakeMovement(CargoEndEffector::Direction::OFF, 0.0);
+  }
 }
 
 OI *OI::getInstance() {

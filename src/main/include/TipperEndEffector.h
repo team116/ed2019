@@ -6,23 +6,27 @@
  */
 #ifndef SRC_TIPPER_H_
 #define SRC_TIPPER_H_
-#include <frc/DoubleSolenoid.h>
+#include <frc/DigitalInput.h>
 #include <Ports.h>
 #include <ctre/Phoenix.h>
+#include <frc/DoubleSolenoid.h>
 
 class TipperEndEffector {
  public:
   static TipperEndEffector* getInstance();
   frc::DoubleSolenoid Tipper1EjectorSolenoid{PCM0Ports::kPCM0CANID,
-                                           PCM0Ports::kPCM0Tipper1Extend,
-                                           PCM0Ports::kPCM0Tipper1Retract};
+                                             PCM0Ports::kPCM0Tipper1Extend,
+                                             PCM0Ports::kPCM0Tipper1Retract};
   frc::DoubleSolenoid Tipper2EjectorSolenoid{PCM0Ports::kPCM0CANID,
-                                           PCM0Ports::kPCM0Tipper2Extend,
-                                           PCM0Ports::kPCM0Tipper2Retract};
-void tipDeploy();
-void tipRetract();
-void tipOff();
-void tipClimb(double speed);
+                                             PCM0Ports::kPCM0Tipper2Extend,
+                                             PCM0Ports::kPCM0Tipper2Retract};
+  void tipDeploy();
+  void tipRetract();
+  void tipOff();
+  void tipClimb(double speed);
+  void tipLower(double speed);
+
+  frc::DigitalInput *elevatorLS;
 
 #ifdef EDV21
   WPI_VictorSPX m_TipperMotor{RobotPorts::kTippingChannel};

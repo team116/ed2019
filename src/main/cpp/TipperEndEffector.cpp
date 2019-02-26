@@ -4,6 +4,8 @@
  *  Created on: Jan 21, 2019
  *      Author: Mike A.
  */
+#include <frc/DigitalInput.h>
+
 #include <TipperEndEffector.h>
 #include "Ports.h"
 
@@ -13,9 +15,17 @@ TipperEndEffector::TipperEndEffector() {
     // put initialization code into the constructor
     Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kOff);
     Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kOff);
+    TipperEndEffector::elevatorLS = new frc::DigitalInput(RobotPorts::kElevatorLimSw);
 }
 
 void TipperEndEffector::tipClimb(double speed) {
+    m_TipperMotor.Set(speed);
+    while (elevatorLS->Get()) {
+        frc::Wait(0.25);  // check every .25 seconds
+    }
+}
+
+void TipperEndEffector::tipLower(double speed) {
     m_TipperMotor.Set(speed);
 }
 
