@@ -25,6 +25,7 @@ class TipperEndEffector {
   void tipOff();
   void tipClimb(double speed);
   void tipLower(double speed);
+  void tipStop();
 
   frc::DigitalInput *elevatorLS;
 

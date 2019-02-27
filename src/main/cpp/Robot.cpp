@@ -186,7 +186,16 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-  while (IsOperatorControl() && IsEnabled()) {
+/*
+  if (Robot::ds.IsOperatorControl()) {
+    printf("IsOperatorControl is True\n");
+  }
+  if (Robot::ds.IsEnabled()) {
+    printf("IsEnabled is True\n");
+  }
+*/
+
+  while ((Robot::ds.IsOperatorControl()) && (Robot::ds.IsEnabled())) {
     try {
       oi->process();
     } catch (std::exception &e) {

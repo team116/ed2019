@@ -39,6 +39,8 @@ public:
   void TeleopInit() override;
   void TeleopPeriodic() override;
   void TestPeriodic() override;
+  frc::DriverStation&  ds = frc::DriverStation::GetInstance();
+
 
 private:
   // ========================== Device Instances =============================

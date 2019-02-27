@@ -22,11 +22,15 @@ void TipperEndEffector::tipClimb(double speed) {
     m_TipperMotor.Set(speed);
     while (elevatorLS->Get()) {
         frc::Wait(0.25);  // check every .25 seconds
-    }
+   }
 }
 
 void TipperEndEffector::tipLower(double speed) {
     m_TipperMotor.Set(speed);
+}
+
+void TipperEndEffector::tipStop() {
+    m_TipperMotor.Set(0.0);
 }
 
 void TipperEndEffector::tipOff() {
