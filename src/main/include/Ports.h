@@ -113,13 +113,13 @@ constexpr int kSensor2Enable   = 2;   // Map 2
 constexpr int kSensor3Enable   = 3;   // Map 3
 constexpr int kSensor4Enable   = 4;   // Map 4
 constexpr int kSensor5Enable   = 5;   // Map 5
-constexpr int kRobotTipOver    = 6;   // Map 14
+constexpr int kRobotClimb      = 6;   // Empty
 constexpr int kRocketTopPos    = 7;   // Map 6
 constexpr int kRocketMidPos    = 8;   // Map 12
 constexpr int kRocketBottomPos = 9;   // Map 15
 constexpr int kCargoBay        = 10;  // Map 13
 constexpr int kLifterBottom    = 11;  // Map 16
-constexpr int kRobotClimb      = 12;  // Map 7
+constexpr int kRobotTipOver    = 12;  // Map 7
 
 constexpr int kJoy1XAxis = 1;
 constexpr int kJoy1YAxis = 2;

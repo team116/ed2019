@@ -17,6 +17,24 @@ LiftEndEffector::LiftEndEffector() {
     LiftEndEffector::liftPos = BOTTOM;
 }
 
+  void LiftEndEffector::liftUp() {
+
+  }
+
+  void LiftEndEffector::liftDown() {
+
+  }
+
+  void LiftEndEffector::manualLiftUp() {
+      m_LiftMotor.Set(0.5);
+  }
+
+  void LiftEndEffector::manualLiftDown() {
+      m_LiftMotor.Set(-0.5);
+
+  }
+
+
 LiftEndEffector* LiftEndEffector::getInstance() {
     if (INSTANCE == nullptr) {
         INSTANCE = new LiftEndEffector();

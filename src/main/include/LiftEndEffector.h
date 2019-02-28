@@ -13,6 +13,7 @@
 class LiftEndEffector {
 public:
     static LiftEndEffector* getInstance();
+
 #ifdef EDV21    
      WPI_VictorSPX m_LiftMotor{RobotPorts::kLiftChannel};
 #else
@@ -25,6 +26,12 @@ public:
 
   frc::DigitalInput *bottomLS;
   frc::DigitalInput *liftLS;
+
+  void liftUp();
+  void liftDown();
+  void manualLiftUp();
+  void manualLiftDown();
+
 
 private:
     LiftEndEffector();
