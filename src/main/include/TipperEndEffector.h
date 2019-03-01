@@ -23,7 +23,7 @@ class TipperEndEffector {
   void tipDeploy();
   void tipRetract();
   void tipOff();
-  void tipClimb(double speed);
+  void tipClimb(double speed, bool disableSensor);
   void tipLower(double speed);
   void tipStop();
 

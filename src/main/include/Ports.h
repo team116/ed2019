@@ -121,9 +121,9 @@ constexpr int kCargoBay        = 10;  // Map 13
 constexpr int kLifterBottom    = 11;  // Map 16
 constexpr int kRobotTipOver    = 12;  // Map 7
 
-constexpr int kJoy1XAxis = 1;
-constexpr int kJoy1YAxis = 2;
-constexpr int kJoy1ZAxis = 3;
+constexpr int kJoy1XAxis = 0;
+constexpr int kJoy1YAxis = 1;
+constexpr int kJoy1ZAxis = 2;
 
 // Third external Joystick Interface   -- BU0836LC
 constexpr int kLifterUp     = 1;
@@ -140,6 +140,11 @@ constexpr int kCargoIn      = 11;    // Map 9A
 constexpr int kCargoOut     = 12;    // Map 9B
 
 constexpr int kJoy2RollerSpeed = 1;
+
+constexpr int kJoy2XAxis = 0;
+constexpr int kJoy2YAxis = 1;
+constexpr int kJoy2ZAxis = 2;
+
 
 }  // namespace OIPorts
 

@@ -75,6 +75,8 @@ void Robot::RobotInit() {
   oi->m_destination.SetDefaultOption("Teleop", oi->Dest::TELEOP);
 
   frc::SmartDashboard::PutData("Destination", &oi->m_destination);
+  // Enable the closed loop compressor
+  Robot::compress->SetClosedLoopControl(true);
 }
 
 /**
@@ -186,15 +188,6 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-/*
-  if (Robot::ds.IsOperatorControl()) {
-    printf("IsOperatorControl is True\n");
-  }
-  if (Robot::ds.IsEnabled()) {
-    printf("IsEnabled is True\n");
-  }
-*/
-
   while ((Robot::ds.IsOperatorControl()) && (Robot::ds.IsEnabled())) {
     try {
       oi->process();
@@ -207,6 +200,10 @@ void Robot::TeleopPeriodic() {
     } catch (std::exception &e) {
       printf("Error in Mobility -- TeleopPeriodic\n%s", e.what());
     }
+  }
+  if (!Robot::ds.IsEnabled()) {
+    // Disable the closed loop compressor
+    Robot::compress->SetClosedLoopControl(false);
   }
 }
 

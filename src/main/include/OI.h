@@ -28,18 +28,17 @@ class OI {
   static OI *getInstance();
   void process();
 
-
   frc::XboxController *xbox0;
   frc::Joystick *buttonBox1;
   frc::Joystick *buttonBox2;
   frc::Joystick *buttonBox3;
 
   // Disabled sensor state variables
-  bool enableSensor1 = true;
-  bool enableSensor2 = true;
-  bool enableSensor3 = true;
-  bool enableSensor4 = true;
-  bool enableSensor5 = true;
+  bool disableBottomSensor = false;
+  bool disableLiftSensor   = false;
+  bool disableCargoSensor  = false;
+  bool disableTipperSensor = false;
+  bool disableSensor5      = false;
 
   // Cargo Bay vs. Rocket lifter state flags
   bool selectCargoBayPos      = false; // initial state is off

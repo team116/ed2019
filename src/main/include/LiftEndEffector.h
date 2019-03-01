@@ -20,6 +20,8 @@ public:
      WPI_TalonSRX m_LiftMotor{RobotPorts::kLiftChannel};
 #endif
 
+  const double liftMotorSpeed = 0.5;
+
   enum liftPosition {BOTTOM, LOADER, RKTBTMCARGO, CARGOBAY, RKTMIDHATCH, RKTMIDCARGO, RKTTOPHATCH, RKTTOPCARGO};
 
   liftPosition liftPos = BOTTOM;  // Start at the bottom position at the beginning of the match
@@ -27,11 +29,13 @@ public:
   frc::DigitalInput *bottomLS;
   frc::DigitalInput *liftLS;
 
-  void liftUp();
-  void liftDown();
+  void liftUp(int numSwitches, bool disableSensor);
+  void liftDown(int numSwitches, bool disableSensor);
   void manualLiftUp();
   void manualLiftDown();
-
+  void manualLiftStop();
+  void bottomPos(bool disableSensor);
+  void cargoPos(int numSwitches, bool disableSensor);
 
 private:
     LiftEndEffector();

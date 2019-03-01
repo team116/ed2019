@@ -20,6 +20,7 @@
 #include <ctre/Phoenix.h>
 #include <frc/DriverStation.h>
 #include <frc/MotorSafety.h>
+#include <frc/Compressor.h>
 #include <Ports.h>
 #include <OI.h>
 #include <CargoEndEffector.h>
@@ -39,6 +40,7 @@ public:
   void TeleopInit() override;
   void TeleopPeriodic() override;
   void TestPeriodic() override;
+  frc::Compressor *compress = new frc::Compressor(PCM0Ports::kPCM0CANID);
   frc::DriverStation&  ds = frc::DriverStation::GetInstance();
 
 
