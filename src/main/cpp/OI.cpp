@@ -50,6 +50,19 @@ OI::OI() {
   }
 }
 
+void OI::upOrDown(LiftEndEffector::liftPosition currentPos,
+                  LiftEndEffector::liftPosition newPos) {
+  int numPlaces;
+  if (currentPos > newPos) {  // Moving down
+    numPlaces = currentPos - newPos;
+    lift->liftDown(numPlaces, OI::disableLiftSensor);
+  }
+  if (currentPos < newPos) {  // Moving up
+    numPlaces = newPos - currentPos;
+    lift->liftUp(numPlaces, OI::disableLiftSensor);
+  }
+}
+
 void OI::process() {
   volatile double tempX, tempY, tempRotate, rollerSpeed;
   volatile double elevatorY = 0.0;
@@ -118,15 +131,7 @@ void OI::process() {
   if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1,
                                OIPorts::kCargoBay)) {
     OI::selectCargoBayPos = true;
-    if (lift->liftPos > LiftEndEffector::liftPosition::RKTBTMCARGO) {
-      lift->liftDown(
-          (lift->liftPos - LiftEndEffector::liftPosition::RKTBTMCARGO),
-          OI::disableLiftSensor);
-    }
-    if (lift->liftPos < LiftEndEffector::liftPosition::RKTBTMCARGO) {
-      lift->liftUp((LiftEndEffector::liftPosition::RKTBTMCARGO - lift->liftPos),
-                   OI::disableLiftSensor);
-    }
+    upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTBTMCARGO);
   }
 
   // take lifter to the bottom
@@ -141,30 +146,11 @@ void OI::process() {
                                OIPorts::kRocketBottomPos)) {
     // use OI::intakeDeploy = true to select rocket positions
     OI::selectRocketBottomPos = true;
-    // Tell number of switches to go
     if (OI::intakeDeploy) {  // we're dealing with hatches
-      if (lift->liftPos > LiftEndEffector::liftPosition::LOADER) {
-        lift->liftDown(
-            (lift->liftPos - LiftEndEffector::liftPosition::LOADER),
-            OI::disableLiftSensor);
-      }
-      if (lift->liftPos < LiftEndEffector::liftPosition::LOADER) {
-        lift->liftUp(
-            (LiftEndEffector::liftPosition::LOADER - lift->liftPos),
-            OI::disableLiftSensor);
-      }
+      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::LOADER);
     } else {
-      if (lift->liftPos > LiftEndEffector::liftPosition::RKTBTMCARGO) {
-        lift->liftDown(
-            (lift->liftPos - LiftEndEffector::liftPosition::RKTBTMCARGO),
-            OI::disableLiftSensor);
-      }
-      if (lift->liftPos < LiftEndEffector::liftPosition::RKTBTMCARGO) {
-        lift->liftUp(
-            (LiftEndEffector::liftPosition::RKTBTMCARGO - lift->liftPos),
-            OI::disableLiftSensor);
-      }
-    }  
+      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTBTMCARGO);
+    }
   }
 
   if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1,
@@ -172,27 +158,9 @@ void OI::process() {
     // use OI::intakeDeploy = true to select rocket positions
     OI::selectRocketMidPos = true;
     if (OI::intakeDeploy) {  // we're dealing with hatches
-      if (lift->liftPos > LiftEndEffector::liftPosition::RKTMIDHATCH) {
-        lift->liftDown(
-            (lift->liftPos - LiftEndEffector::liftPosition::RKTMIDHATCH),
-            OI::disableLiftSensor);
-      }
-      if (lift->liftPos < LiftEndEffector::liftPosition::RKTMIDHATCH) {
-        lift->liftUp(
-            (LiftEndEffector::liftPosition::RKTMIDHATCH - lift->liftPos),
-            OI::disableLiftSensor);
-      }
+      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTMIDHATCH);
     } else {
-      if (lift->liftPos > LiftEndEffector::liftPosition::RKTMIDCARGO) {
-        lift->liftDown(
-            (lift->liftPos - LiftEndEffector::liftPosition::RKTMIDCARGO),
-            OI::disableLiftSensor);
-      }
-      if (lift->liftPos < LiftEndEffector::liftPosition::RKTMIDCARGO) {
-        lift->liftUp(
-            (LiftEndEffector::liftPosition::RKTMIDCARGO - lift->liftPos),
-            OI::disableLiftSensor);
-      }
+      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTMIDCARGO);
     }
   }
 
@@ -201,28 +169,11 @@ void OI::process() {
     // use OI::intakeDeploy = true to select rocket positions
     OI::selectRocketTopPos = true;
     if (OI::intakeDeploy) {  // we're dealing with hatches
-      if (lift->liftPos > LiftEndEffector::liftPosition::RKTTOPHATCH) {
-        lift->liftDown(
-            (lift->liftPos - LiftEndEffector::liftPosition::RKTTOPHATCH),
-            OI::disableLiftSensor);
-      }
-      if (lift->liftPos < LiftEndEffector::liftPosition::RKTTOPHATCH) {
-        lift->liftUp(
-            (LiftEndEffector::liftPosition::RKTTOPHATCH - lift->liftPos),
-            OI::disableLiftSensor);
-      }
+      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTTOPHATCH);
     } else {
-      if (lift->liftPos > LiftEndEffector::liftPosition::RKTTOPCARGO) {
-        lift->liftDown(
-            (lift->liftPos - LiftEndEffector::liftPosition::RKTTOPCARGO),
-            OI::disableLiftSensor);
-      }
-      if (lift->liftPos < LiftEndEffector::liftPosition::RKTTOPCARGO) {
-        lift->liftUp(
-            (LiftEndEffector::liftPosition::RKTTOPCARGO - lift->liftPos),
-            OI::disableLiftSensor);
-      }
-    }  }
+      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTTOPCARGO);
+    }
+  }
 
   // Use the Big Red Joystick for the Elevator
   elevatorY = ds.GetStickAxis(OIPorts::kJoystickChannel1, OIPorts::kJoy1YAxis);

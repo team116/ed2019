@@ -25,8 +25,6 @@
 
 class OI {
  public:
-  static OI *getInstance();
-  void process();
 
   frc::XboxController *xbox0;
   frc::Joystick *buttonBox1;
@@ -70,6 +68,9 @@ class OI {
   double x, y, rotate;  // Position of joystick inputs
 
   enum Pos { LEFT, CENTER, RIGHT };
+
+  enum Direction { UP, DOWN, NONE};
+
   frc::SendableChooser<Pos> m_chooser;
 
   enum Dest {
@@ -81,10 +82,15 @@ class OI {
     RIGHTROCKET,
     LEFTROCKET
   };
+  
   frc::SendableChooser<Dest> m_destination;
 
   Pos startPosition;
   Dest destination;
+  Direction direct;
+  static OI *getInstance();
+  void process();
+  void upOrDown(LiftEndEffector::liftPosition currentPos, LiftEndEffector::liftPosition newPos);
 
  private:
   // Instances
