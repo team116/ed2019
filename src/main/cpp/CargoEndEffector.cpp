@@ -24,7 +24,7 @@ void CargoEndEffector::intakeMovement(Direction direction, double speed) {
             m_IntakeMotor.Set(speed);
         break;
         case EJECT :
-            m_IntakeMotor.Set(speed);
+            m_IntakeMotor.Set(-speed);
         break;
         case OFF:
             m_IntakeMotor.Set(0.0);
@@ -35,6 +35,7 @@ void CargoEndEffector::intakeMovement(Direction direction, double speed) {
 }
 
 void CargoEndEffector::intakeDeploy() {
+    printf("In deploy\n");
     CargoIntakeSolenoid.Set(frc::DoubleSolenoid::kForward); 
 }
 
@@ -43,6 +44,7 @@ void CargoEndEffector::intakeOff() {
 }
 
 void CargoEndEffector::intakeRetract() {
+    printf("In retract\n");
     CargoIntakeSolenoid.Set(frc::DoubleSolenoid::kReverse); 
 }
 

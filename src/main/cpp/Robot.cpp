@@ -10,6 +10,10 @@
 #include <iostream>
 
 void Robot::RobotInit() {
+  double currentComp;
+  bool enabled;
+  bool pressureSW;
+
   // Get the OI instance
   try {
     oi = OI::getInstance();
@@ -77,6 +81,12 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutData("Destination", &oi->m_destination);
   // Enable the closed loop compressor
   Robot::compress->SetClosedLoopControl(true);
+  enabled = compress->Enabled();
+  pressureSW = compress->GetPressureSwitchValue();
+  currentComp = compress->GetCompressorCurrent();
+
+  printf(" %d  %d  %f", enabled, pressureSW, currentComp);
+
 }
 
 /**
@@ -115,6 +125,7 @@ void Robot::AutonomousInit() {
     default:
       printf("Default Selected\n");
       break;
+        Robot::compress->SetClosedLoopControl(true);
   }
 
   oi->destination = oi->m_destination.GetSelected();
@@ -188,6 +199,7 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
+    Robot::compress->SetClosedLoopControl(true);
   while ((Robot::ds.IsOperatorControl()) && (Robot::ds.IsEnabled())) {
     try {
       oi->process();

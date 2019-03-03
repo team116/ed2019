@@ -20,7 +20,7 @@ public:
      WPI_TalonSRX m_LiftMotor{RobotPorts::kLiftChannel};
 #endif
 
-  const double liftMotorSpeed = 0.5;
+  const double liftMotorSpeed = 1.0;
 
   enum liftPosition {BOTTOM, LOADER, RKTBTMCARGO, CARGOBAY, RKTMIDHATCH, RKTMIDCARGO, RKTTOPHATCH, RKTTOPCARGO};
 

@@ -38,13 +38,13 @@ void TipperEndEffector::tipOff() {
   Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kOff);
 }
 void TipperEndEffector::tipDeploy() {
-  Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kForward);
-  Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kForward);
+  Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kReverse);
+  Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kReverse);
 }
 
 void TipperEndEffector::tipRetract() {
-  Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kReverse);
-  Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kReverse);
+  Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kForward);
+  Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kForward);
 }
 
 TipperEndEffector* TipperEndEffector::getInstance() {

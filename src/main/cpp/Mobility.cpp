@@ -5,6 +5,8 @@
  *      Author: Mike A.
  */
 
+#include <Mobility.h>
+#include <OI.h>
 #include <cameraserver/CameraServer.h>
 #include <ctre/phoenix.h>
 #include <frc/DriverStation.h>
@@ -17,8 +19,6 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "Ports.h"
-#include <Mobility.h>
-#include <OI.h>
 
 Mobility* Mobility::INSTANCE = nullptr;
 
@@ -34,12 +34,16 @@ Mobility::Mobility() {
   }
 
   m_robotDrive.SetExpiration(2.0);
-  m_robotDrive.SetSafetyEnabled(false); 
+  m_robotDrive.SetSafetyEnabled(false);
 }
 
 void Mobility::process() {
   m_robotDrive.FeedWatchdog();
-  m_robotDrive.DriveCartesian(oi->x, oi->y, oi->rotate);
+  if (oi->halfPower) {
+    m_robotDrive.DriveCartesian(oi->x / 2.0, oi->y / 2.0, oi->rotate / 2.0);
+  } else {
+    m_robotDrive.DriveCartesian(oi->x, oi->y, oi->rotate);
+  }
 }
 
 Mobility* Mobility::getInstance() {

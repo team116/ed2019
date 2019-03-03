@@ -29,8 +29,8 @@ class USBCamera
         // Set the resolution
         camera.SetResolution(320, 240);
 
-        camera.SetFPS(30);
-        camera.SetWhiteBalanceManual(50);
+ //       camera.SetFPS(30);
+//        camera.SetWhiteBalanceManual(50);
        // Get a CvSink. This will capture Mats from the Camera
         cs::CvSink cvSink = frc::CameraServer::GetInstance()->GetVideo();
         // Setup a CvSource. This will send images back to the Dashboard
@@ -38,6 +38,7 @@ class USBCamera
             frc::CameraServer::GetInstance()->PutVideo("Rectangle", 320, 240);
 
         // Mats are very memory expensive. Lets reuse this Mat.
+/*
         cv::Mat mat;
 
         while (true)
@@ -59,6 +60,7 @@ class USBCamera
             // Give the output stream a new image to display
             outputStream.PutFrame(mat);
         }
+        */
     }
 #endif
 

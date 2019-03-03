@@ -88,6 +88,8 @@ class OI {
   Pos startPosition;
   Dest destination;
   Direction direct;
+  volatile bool halfPower = false;
+
   static OI *getInstance();
   void process();
   void upOrDown(LiftEndEffector::liftPosition currentPos, LiftEndEffector::liftPosition newPos);

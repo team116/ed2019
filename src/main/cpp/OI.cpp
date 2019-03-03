@@ -82,6 +82,32 @@ void OI::process() {
   OI::x = tempX * tempX * tempX;                      // pow(tempX,3);
   OI::y = tempY * tempY * tempY;                      // pow(tempY,3);
   OI::rotate = tempRotate * tempRotate * tempRotate;  // pow(tempRotate,3)
+                                                
+ 
+ 
+  if (ds.GetStickButtonPressed(OIPorts::kXboxChannel,
+                               OIPorts::kXboxRightBumperButton)) {
+    //  if (buttonBox2Buttons & (1 << (OIPorts::kRollerDeploy - 1))) {
+    OI::halfPower = true;  
+    printf("Half=T\n");
+  }
+
+
+  if (ds.GetStickButtonReleased(OIPorts::kXboxChannel,
+                                OIPorts::kXboxRightBumperButton)) {
+    OI::halfPower = false;  
+    printf("Half=F\n");
+    // once released we don't scale
+  }
+
+/*
+if (halfPower) {
+    OI::x = OI::x / 2.0;            // pow(tempX,3);
+    OI::y = OI::y / 2.0;            // pow(tempY,3);
+    OI::rotate = OI::rotate / 2.0;  // pow(tempRotate,3)
+    printf("Half power %f  %f  %f\n", OI::x, OI::y, OI::rotate);
+}
+*/
 
   // Get the button status
   // We do this because a series of getRawButton calls is taking more time than
@@ -109,22 +135,25 @@ void OI::process() {
     //  if (buttonBox2Buttons & (1 << (OIPorts::kRollerDeploy - 1))) {
     OI::intakeDeploy = true;
     OI::cargo->intakeDeploy();
-  } else {
-    if (OI::intakeDeploy) {  // retract only if previously deployed
-      OI::intakeDeploy = false;
-      OI::cargo->intakeRetract();
-    }
+    printf("press Intake out\n");
   }
 
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel2,
+                                OIPorts::kRollerDeploy)) {
+    printf("release Intake retract\n");
+    OI::intakeDeploy = false;
+    OI::cargo->intakeRetract();
+  }
   if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1,
                                OIPorts::kRobotTipOver)) {
     OI::robotTip = true;
     OI::tipper->tipDeploy();
-  } else {
-    if (OI::robotTip) {  // only retract if the tipper was previously deployed
-      OI::robotTip = false;
-      OI::tipper->tipRetract();
-    }
+  }
+
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1,
+                                OIPorts::kRobotTipOver)) {
+    OI::robotTip = false;
+    OI::tipper->tipRetract();
   }
 
   // Take lifter to the cargo position
@@ -141,28 +170,30 @@ void OI::process() {
     lift->bottomPos(OI::disableBottomSensor);
   }
 
-  // take lifter to the rocket bottom
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1,
-                               OIPorts::kRocketBottomPos)) {
-    // use OI::intakeDeploy = true to select rocket positions
-    OI::selectRocketBottomPos = true;
-    if (OI::intakeDeploy) {  // we're dealing with hatches
-      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::LOADER);
-    } else {
-      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTBTMCARGO);
+  /*
+    // take lifter to the rocket bottom
+    if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1,
+                                 OIPorts::kRocketBottomPos)) {
+      // use OI::intakeDeploy = true to select rocket positions
+      OI::selectRocketBottomPos = true;
+      if (OI::intakeDeploy) {  // we're dealing with hatches
+        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::LOADER);
+      } else {
+        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTBTMCARGO);
+      }
     }
-  }
 
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1,
-                               OIPorts::kRocketMidPos)) {
-    // use OI::intakeDeploy = true to select rocket positions
-    OI::selectRocketMidPos = true;
-    if (OI::intakeDeploy) {  // we're dealing with hatches
-      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTMIDHATCH);
-    } else {
-      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTMIDCARGO);
+    if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1,
+                                 OIPorts::kRocketMidPos)) {
+      // use OI::intakeDeploy = true to select rocket positions
+      OI::selectRocketMidPos = true;
+      if (OI::intakeDeploy) {  // we're dealing with hatches
+        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTMIDHATCH);
+      } else {
+        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTMIDCARGO);
+      }
     }
-  }
+    */
 
   if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1,
                                OIPorts::kRocketTopPos)) {
@@ -182,13 +213,13 @@ void OI::process() {
   // Going up
   if (elevatorY > 0.2) {
     // Move up
-    tipper->tipClimb(0.5, OI::disableLiftSensor);
+    tipper->tipClimb(1.0, OI::disableLiftSensor);
   }
 
   // Going down
   if (elevatorY < -0.2) {
     // Move down
-    tipper->tipLower(0.5);
+    tipper->tipLower(1.0);
   }
 
   // stop the elevator motor
@@ -197,6 +228,7 @@ void OI::process() {
   }
 
   // Move lifter up
+  /*
   if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2,
                                OIPorts::kLifterUp)) {
     OI::moveLifterUp = true;
@@ -207,25 +239,61 @@ void OI::process() {
       OI::moveLifterUp = false;
     }
   }
-
+*/
   // Use the Big Red Joystick for the Elevator
-  liftY = ds.GetStickAxis(OIPorts::kJoystickChannel2, OIPorts::kJoy2YAxis);
-  frc::SmartDashboard::PutNumber("Lift Joystick value", liftY);
+//  liftY = ds.GetStickAxis(OIPorts::kJoystickChannel2, OIPorts::kJoy2YAxis);
+//  frc::SmartDashboard::PutNumber("Lift Joystick value", liftY);
   // Going up
-  if (liftY > 0.2) {
-    // Move up
-    OI::moveLifterUp = true;
-    lift->manualLiftUp();
-  }
+  /*
+    if (liftY < -0.13) {
+      // Move up
+      OI::moveLifterUp = true;
+      lift->manualLiftDown();
+    }
 
-  // Going down
-  if (liftY < -0.2) {
-    // Move down
+    // Going down
+    if (liftY > 0.3) {
+      // Move down
+      lift->manualLiftUp();
+    }
+
+    // stop the elevator motor
+    if ((liftY < 0.2) && (liftY > -0.08)) {
+      lift->manualLiftStop();
+    }
+  */
+
+  // Alternate Move lifter up Xbox Y
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1,
+                               OIPorts::kRocketBottomPos)) {
+    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
+    OI::moveLifterUp = true;
+    OI::moveLifterDown = false;
     lift->manualLiftDown();
   }
 
-  // stop the elevator motor
-  if ((liftY < 0.2) && (liftY > -0.2)) {
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1,
+                               OIPorts::kRocketBottomPos)) {
+    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
+    OI::moveLifterUp = false;
+    OI::moveLifterDown = false;
+    lift->manualLiftStop();
+  }
+
+  // Alternate Move lifter down on Xbox A
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1,
+                               OIPorts::kRocketMidPos)) {
+    //  if (xboxButtons & (1 << (OIPorts::kXboxAButton - 1))) {
+    OI::moveLifterDown = true;
+    OI::moveLifterUp = false;
+    lift->manualLiftUp();
+  }
+
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1,
+                               OIPorts::kRocketMidPos)) {
+    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
+    OI::moveLifterUp = false;
+    OI::moveLifterDown = false;
     lift->manualLiftStop();
   }
 
@@ -234,28 +302,24 @@ void OI::process() {
     //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
     OI::moveLifterUp = true;
     OI::moveLifterDown = false;
-    lift->manualLiftUp();
-  } else {
-    if (OI::moveLifterUp) {
-      OI::moveLifterDown = false;
-      OI::moveLifterUp = false;
-      lift->manualLiftStop();
-    }
+    lift->manualLiftDown();
   }
 
-  // Move lifter down
+  if (ds.GetStickButtonReleased(OIPorts::kXboxChannel, OIPorts::kXboxYButton)) {
+    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
+    OI::moveLifterUp = false;
+    OI::moveLifterDown = false;
+    lift->manualLiftStop();
+  }
+
+  // Move lifter down'
+
   if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2,
                                OIPorts::kLifterDown)) {
     //  if (buttonBox2Buttons & (1 << (OIPorts::kLifterDown - 1))) {
     OI::moveLifterDown = true;
     OI::moveLifterUp = false;
-    lift->manualLiftDown();
-  } else {
-    if (OI::moveLifterDown) {
-      OI::moveLifterDown = false;
-      OI::moveLifterUp = false;
-      lift->manualLiftStop();
-    }
+    lift->manualLiftUp();
   }
 
   // Alternate Move lifter down on Xbox A
@@ -264,12 +328,13 @@ void OI::process() {
     OI::moveLifterDown = true;
     OI::moveLifterUp = false;
     lift->manualLiftDown();
-  } else {
-    if (OI::moveLifterDown) {
-      OI::moveLifterDown = false;
-      OI::moveLifterUp = false;
-      lift->manualLiftStop();
-    }
+  }
+
+  if (ds.GetStickButtonReleased(OIPorts::kXboxChannel, OIPorts::kXboxAButton)) {
+    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
+    OI::moveLifterUp = false;
+    OI::moveLifterDown = false;
+    lift->manualLiftStop();
   }
 
   // Deploy Hatch
@@ -277,14 +342,17 @@ void OI::process() {
                                OIPorts::kHatchDeploy)) {
     //  if (buttonBox2Buttons & (1 << (OIPorts::kHatchDeploy - 1))) {
     if (!OI::hatchDeploy) {
+      printf("Deployed\n");
       OI::hatch->hatchDeploy();
       OI::hatchDeploy = true;
     }
-  } else {
-    if (OI::hatchDeploy) {  // retract only if previously deployed
-      OI::hatchDeploy = false;
-      OI::hatch->hatchRetract();
-    }
+  }
+
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel2,
+                                OIPorts::kHatchDeploy)) {
+    printf("retract\n");
+    OI::hatchDeploy = false;
+    OI::hatch->hatchRetract();
   }
 
   // Roller Direction IN
@@ -292,7 +360,9 @@ void OI::process() {
     OI::rollerIntake = true;
     OI::rollerEject = false;
     rollerSpeed = buttonBox2->GetX();  // Get speed from rotary switch
-    OI::cargo->intakeMovement(CargoEndEffector::Direction::INTAKE, rollerSpeed);
+    //    OI::cargo->intakeMovement(CargoEndEffector::Direction::INTAKE,
+    //    rollerSpeed);
+    OI::cargo->intakeMovement(CargoEndEffector::Direction::INTAKE, 0.8);
   }
 
   // Roller direction Out
@@ -301,7 +371,9 @@ void OI::process() {
     OI::rollerEject = true;
     OI::rollerIntake = false;
     rollerSpeed = buttonBox2->GetX();  // Get speed from rotary switch
-    OI::cargo->intakeMovement(CargoEndEffector::Direction::EJECT, rollerSpeed);
+    //    OI::cargo->intakeMovement(CargoEndEffector::Direction::EJECT,
+    //    rollerSpeed);
+    OI::cargo->intakeMovement(CargoEndEffector::Direction::EJECT, 0.8);
   }
 
   // Stop roller
