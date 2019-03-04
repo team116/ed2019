@@ -6,6 +6,7 @@
  */
 #include <LiftEndEffector.h>
 #include <frc/DigitalInput.h>
+#include <frc/Timer.h>
 #include "Ports.h"
 
 LiftEndEffector* LiftEndEffector::INSTANCE = nullptr;
@@ -18,6 +19,16 @@ LiftEndEffector::LiftEndEffector() {
   LiftEndEffector::liftLS = new frc::DigitalInput(RobotPorts::kLiftLimSw);
   LiftEndEffector::bottomLS = new frc::DigitalInput(RobotPorts::kBottomLimSw);
   LiftEndEffector::liftPos = BOTTOM;
+  LiftEndEffector::liftTimer = new frc::Timer();
+
+}
+
+void LiftEndEffector::liftTimerReset() {
+  LiftEndEffector::liftTimer->Reset();
+}
+
+void LiftEndEffector::liftTimerStart() {
+  LiftEndEffector::liftTimer->Start();
 }
 
 void LiftEndEffector::liftUp(int numSwitches, bool disableSensor) {
@@ -42,11 +53,12 @@ void LiftEndEffector::liftDown(int numSwitches, bool disableSensor) {
 
 void LiftEndEffector::bottomPos(bool disableSensor) {
   // without the sensor, this does nothing
+  int numSwitchesToGo = 0;
   if (!disableSensor) {
     if (LiftEndEffector::liftPos > BOTTOM) {
-      // we need to go down
+      numSwitchesToGo = LiftEndEffector::liftPos;  // This is the number of switches to go
       if (!disableSensor) {
-        // we need to track the number of senso clicks
+        // we need to track the number of sensor clicks
         while (!(liftLS->Get())) {
           frc::Wait(0.2);  // check every .2 seconds
         }

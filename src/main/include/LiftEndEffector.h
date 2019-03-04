@@ -28,6 +28,7 @@ public:
 
   frc::DigitalInput *bottomLS;
   frc::DigitalInput *liftLS;
+  frc::Timer *liftTimer;
 
   void liftUp(int numSwitches, bool disableSensor);
   void liftDown(int numSwitches, bool disableSensor);
@@ -36,6 +37,8 @@ public:
   void manualLiftStop();
   void bottomPos(bool disableSensor);
   void cargoPos(int numSwitches, bool disableSensor);
+  void liftTimerReset();
+  void liftTimerStart();
 
 private:
     LiftEndEffector();

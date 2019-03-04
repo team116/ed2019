@@ -52,7 +52,10 @@ OI::OI() {
 
 void OI::upOrDown(LiftEndEffector::liftPosition currentPos,
                   LiftEndEffector::liftPosition newPos) {
-  int numPlaces;
+  int numPlaces;  
+
+//  lift->LiftEndEffector::liftTimer->Reset();
+
   if (currentPos > newPos) {  // Moving down
     numPlaces = currentPos - newPos;
     lift->liftDown(numPlaces, OI::disableLiftSensor);
@@ -119,7 +122,8 @@ if (halfPower) {
 
   // Deal with disabled sensors
   if (buttonBox1Buttons & 0x1f) {  // are any of the disable sensors on?
-                                   // The answer should be no for any of them
+                                   // Physically on OI box, up is on (0) and down if off (1)
+                                   // The answer should be enabled (up -- on=0 bit) if sensors are working
     // This uses an ugly assignment with knowledge that the bool type is
     // actually an int under the hood
     OI::disableBottomSensor = (buttonBox1Buttons & 0x1);  // 1 bit
@@ -211,13 +215,13 @@ if (halfPower) {
   frc::SmartDashboard::PutNumber("Elevator Joystick value", elevatorY);
 
   // Going up
-  if (elevatorY > 0.2) {
+  if (elevatorY < -0.2) {
     // Move up
     tipper->tipClimb(1.0, OI::disableLiftSensor);
   }
 
   // Going down
-  if (elevatorY < -0.2) {
+  if (elevatorY > 0.2) {
     // Move down
     tipper->tipLower(1.0);
   }
@@ -362,7 +366,7 @@ if (halfPower) {
     rollerSpeed = buttonBox2->GetX();  // Get speed from rotary switch
     //    OI::cargo->intakeMovement(CargoEndEffector::Direction::INTAKE,
     //    rollerSpeed);
-    OI::cargo->intakeMovement(CargoEndEffector::Direction::INTAKE, 0.8);
+    OI::cargo->intakeMovement(CargoEndEffector::Direction::INTAKE, 0.9);
   }
 
   // Roller direction Out
@@ -373,7 +377,7 @@ if (halfPower) {
     rollerSpeed = buttonBox2->GetX();  // Get speed from rotary switch
     //    OI::cargo->intakeMovement(CargoEndEffector::Direction::EJECT,
     //    rollerSpeed);
-    OI::cargo->intakeMovement(CargoEndEffector::Direction::EJECT, 0.8);
+    OI::cargo->intakeMovement(CargoEndEffector::Direction::EJECT, 0.9);
   }
 
   // Stop roller
