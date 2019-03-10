@@ -8,7 +8,7 @@
 #include <Mobility.h>
 #include <OI.h>
 #include <cameraserver/CameraServer.h>
-#include <ctre/phoenix.h>
+#include <ctre/Phoenix.h>
 #include <frc/DriverStation.h>
 #include <frc/GenericHID.h>
 #include <frc/Joystick.h>
