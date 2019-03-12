@@ -13,7 +13,7 @@ WPI_TalonSRX* m_LiftMotor;
 #endif
 
 LiftEndEffector* LiftEndEffector::INSTANCE = nullptr;
- LiftEndEffector *liftEF;
+LiftEndEffector* liftEF;
 frc::DigitalInput* bottomLS;
 frc::DigitalInput* liftLS;
 frc::DigitalInput* threadLSPlaceHolder;
@@ -32,40 +32,40 @@ static void LifterThread() {
     liftTimer->Reset();
     liftTimeOut = false;
 
-    if (LiftEndEffector::liftDestinationIsBottom) {  // Are we going to the bottom?
+    if (liftEF->liftDestinationIsBottom) {  // Are we going to the bottom?
       threadLSPlaceHolder = bottomLS;
     } else {
       threadLSPlaceHolder = liftLS;  // Nope we're using the lift LS instead
     }
     liftTimer->Start();
-    if (!LiftEndEffector::disableSensor) {  // sensor is active
-      while (LiftEndEffector::numClicks) {
+    if (!liftEF->disableSensor) {  // sensor is active
+      while (liftEF->numClicks) {
         while ((threadLSPlaceHolder->Get()) &&
                !(liftTimeOut)) {  //  Get() is true is switch is not pushed
           frc::Wait(0.2);         // check every .2 seconds
           if (liftTimer->Get() >
               LiftEndEffector::MAX_TIME_OUT) {  // Whoops!  We timed out
             liftTimeOut = true;
-            LiftEndEffector::manualLiftStop();  // We got abort so stop the lift
+            liftEF->manualLiftStop();  // We got abort so stop the lift
             break;
           }
         }
         if (!liftTimeOut) {
-          LiftEndEffector::numClicks--;
-          if (LiftEndEffector::currentDirection ==
+          liftEF->numClicks--;
+          if (liftEF->currentDirection ==
               LiftEndEffector::direction::UP) {  // We're going up
-            LiftEndEffector::liftPos + 1;
+            liftEF->liftPos + 1;
           } else {
-            if (LiftEndEffector::currentDirection ==
+            if (liftEF->currentDirection ==
                 LiftEndEffector::direction::DOWN) {  // We're going down
-              LiftEndEffector::liftPos - 1;
+              liftEF->liftPos - 1;
             }
           }
         } else {
-          LiftEndEffector::manualLiftStop();  //  make sure the lift is stopped
+          liftEF->manualLiftStop();  //  make sure the lift is stopped
         }
       }
-      LiftEndEffector::manualLiftStop();  //  We've arrives so stop the motor
+      liftEF->manualLiftStop();  //  We've arrives so stop the motor
     } else {
       // sensor is disabled so we shouldn't be in the tread at all
       printf("Lift sensor is disabled!  Use Manual Mode!\n");
@@ -84,7 +84,7 @@ LiftEndEffector::LiftEndEffector() {
   bottomLS = new frc::DigitalInput(RobotPorts::kBottomLimSw);
   LiftEndEffector::liftPos = BOTTOM;
   LiftEndEffector::currentDirection = STOPPED;
-  LiftEndEffector::liftMotorSpeed = 1.0;   // set the motorspeed
+  LiftEndEffector::liftMotorSpeed = 1.0;  // set the motorspeed
 
   liftTimer = new frc::Timer();
 
@@ -125,9 +125,8 @@ void LiftEndEffector::liftTimerStop() { liftTimer->Stop(); }
 void LiftEndEffector::liftUp(int numSwitches, bool disSensor) {
   // without the sensor, this does nothing
   if (!disSensor) {
-
-    }
   }
+}
 
 void LiftEndEffector::liftDown(int numSwitches, bool disableSensor) {
   // without the sensor, this does nothing
