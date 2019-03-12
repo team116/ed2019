@@ -13,37 +13,64 @@ WPI_TalonSRX* m_LiftMotor;
 #endif
 
 LiftEndEffector* LiftEndEffector::INSTANCE = nullptr;
+ LiftEndEffector *liftEF;
 frc::DigitalInput* bottomLS;
 frc::DigitalInput* liftLS;
+frc::DigitalInput* threadLSPlaceHolder;
 frc::Timer* liftTimer;
 sem_t lifterSem;
-int numClicks = 0;
-bool threadIsActive = false;
+
 bool movementComplete = false;
 bool abortThreadIteration = false;
+bool liftTimeOut = false;
 
 #if defined(__linux__)
 static void LifterThread() {
-  while (true) {
-    sem_wait(&lifterSem);               // Wait until we're needed
-    while (numClicks > 0) {             // If we have clicks to go
-      if (!abortThreadIteration) {      // Check to see if we need to bail out
-        while (!(liftLS->Get())) {      // Check to see if switch is triggered
-          if (!abortThreadIteration) {  // Check to see if we need to bail out
-            frc::Wait(0.2);             // check every .2 seconds
-          } else {
+  while (true) {           // repeat forever
+    sem_wait(&lifterSem);  // Wait until we're needed
+    liftEF->liftIsActive = true;
+    liftTimer->Reset();
+    liftTimeOut = false;
+
+    if (LiftEndEffector::liftDestinationIsBottom) {  // Are we going to the bottom?
+      threadLSPlaceHolder = bottomLS;
+    } else {
+      threadLSPlaceHolder = liftLS;  // Nope we're using the lift LS instead
+    }
+    liftTimer->Start();
+    if (!LiftEndEffector::disableSensor) {  // sensor is active
+      while (LiftEndEffector::numClicks) {
+        while ((threadLSPlaceHolder->Get()) &&
+               !(liftTimeOut)) {  //  Get() is true is switch is not pushed
+          frc::Wait(0.2);         // check every .2 seconds
+          if (liftTimer->Get() >
+              LiftEndEffector::MAX_TIME_OUT) {  // Whoops!  We timed out
+            liftTimeOut = true;
             LiftEndEffector::manualLiftStop();  // We got abort so stop the lift
-            numClicks = 0;  // Let's bail out of looking for clicks
             break;
           }
         }
-        numClicks--;  // decrement the click counter
-      } else {
-        LiftEndEffector::manualLiftStop();  // We got abort so stop the lift
-        numClicks = 0;
-        break;
+        if (!liftTimeOut) {
+          LiftEndEffector::numClicks--;
+          if (LiftEndEffector::currentDirection ==
+              LiftEndEffector::direction::UP) {  // We're going up
+            LiftEndEffector::liftPos + 1;
+          } else {
+            if (LiftEndEffector::currentDirection ==
+                LiftEndEffector::direction::DOWN) {  // We're going down
+              LiftEndEffector::liftPos - 1;
+            }
+          }
+        } else {
+          LiftEndEffector::manualLiftStop();  //  make sure the lift is stopped
+        }
       }
+      LiftEndEffector::manualLiftStop();  //  We've arrives so stop the motor
+    } else {
+      // sensor is disabled so we shouldn't be in the tread at all
+      printf("Lift sensor is disabled!  Use Manual Mode!\n");
     }
+    liftTimer->Stop();
   }
 }
 #endif
@@ -56,7 +83,16 @@ LiftEndEffector::LiftEndEffector() {
   liftLS = new frc::DigitalInput(RobotPorts::kLiftLimSw);
   bottomLS = new frc::DigitalInput(RobotPorts::kBottomLimSw);
   LiftEndEffector::liftPos = BOTTOM;
+  LiftEndEffector::currentDirection = STOPPED;
+  LiftEndEffector::liftMotorSpeed = 1.0;   // set the motorspeed
+
   liftTimer = new frc::Timer();
+
+  // Initialize the Lifter Thread state variables
+  LiftEndEffector::liftIsActive = false;
+  LiftEndEffector::numClicks = 0;
+  LiftEndEffector::liftDestinationIsBottom = false;
+  LiftEndEffector::disableSensor = false;
 
   try {
     liftEF = LiftEndEffector::getInstance();
@@ -69,7 +105,7 @@ LiftEndEffector::LiftEndEffector() {
   std::thread lifterThread(LifterThread);
   lifterThread.detach();
 #else
-  wpi::errs() << "Vision only available on Linux.\n";
+  wpi::errs() << "Lifter Thread only available on Linux.\n";
   wpi::errs().flush();
 #endif
 
@@ -84,15 +120,14 @@ void LiftEndEffector::liftTimerReset() { liftTimer->Reset(); }
 
 void LiftEndEffector::liftTimerStart() { liftTimer->Start(); }
 
-void LiftEndEffector::liftUp(int numSwitches, bool disableSensor) {
+void LiftEndEffector::liftTimerStop() { liftTimer->Stop(); }
+
+void LiftEndEffector::liftUp(int numSwitches, bool disSensor) {
   // without the sensor, this does nothing
-  if (!disableSensor) {
-    // We need to track the number of sensor clicks
-    while (!(liftLS->Get())) {
-      frc::Wait(0.2);  // check every .2 seconds
+  if (!disSensor) {
+
     }
   }
-}
 
 void LiftEndEffector::liftDown(int numSwitches, bool disableSensor) {
   // without the sensor, this does nothing
@@ -109,8 +144,7 @@ void LiftEndEffector::bottomPos(bool disableSensor) {
   int numSwitchesToGo = 0;
   if (!disableSensor) {
     if (LiftEndEffector::liftPos > BOTTOM) {
-      numSwitchesToGo =
-          LiftEndEffector::liftPos;  // This is the number of switches to go
+      numSwitchesToGo = LiftEndEffector::liftPos;  // This is the number of switches to go
       if (!disableSensor) {
         // we need to track the number of sensor clicks
         while (!(liftLS->Get())) {
@@ -134,12 +168,12 @@ void LiftEndEffector::cargoPos(int numSwitches, bool disableSensor) {
 }
 
 void LiftEndEffector::manualLiftUp() {
-  m_LiftMotor->Set(-LiftEndEffector::liftMotorSpeed);
+  m_LiftMotor->Set(-(liftEF->liftMotorSpeed));
   printf("Liftup\n");
 }
 
 void LiftEndEffector::manualLiftDown() {
-  m_LiftMotor->Set(LiftEndEffector::liftMotorSpeed);
+  m_LiftMotor->Set(liftEF->liftMotorSpeed);
   printf("LiftDown\n");
 }
 

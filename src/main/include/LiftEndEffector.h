@@ -18,7 +18,7 @@ class LiftEndEffector {
  public:
   static LiftEndEffector *getInstance();
 
-  const double liftMotorSpeed = 1.0;
+  static double liftMotorSpeed;
 
   enum liftPosition {
     BOTTOM,
@@ -31,8 +31,18 @@ class LiftEndEffector {
     RKTTOPCARGO
   };
 
-  liftPosition liftPos =
-      BOTTOM;  // Start at the bottom position at the beginning of the match
+  enum direction { UP, DOWN, STOPPED };
+
+  static direction currentDirection;  // we start the match with no direction on the lift
+
+  static liftPosition liftPos;  // Start at the bottom position at the beginning of the match
+
+  bool liftIsActive;
+  static int numClicks ;
+  static bool liftDestinationIsBottom;
+  static bool disableSensor;
+
+  static const int MAX_TIME_OUT = 4.0;   // time out for the lift travel
 
   void liftUp(int numSwitches, bool disableSensor);
   void liftDown(int numSwitches, bool disableSensor);
@@ -43,10 +53,10 @@ class LiftEndEffector {
   void cargoPos(int numSwitches, bool disableSensor);
   void liftTimerReset();
   void liftTimerStart();
-
+  void liftTimerStop();
+ 
  private:
   LiftEndEffector();
-  LiftEndEffector *liftEF;
   static LiftEndEffector *INSTANCE;
 };
 

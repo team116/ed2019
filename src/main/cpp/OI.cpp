@@ -139,12 +139,10 @@ if (halfPower) {
     //  if (buttonBox2Buttons & (1 << (OIPorts::kRollerDeploy - 1))) {
     OI::intakeDeploy = true;
     OI::cargo->intakeDeploy();
-    printf("press Intake out\n");
   }
 
   if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel2,
                                 OIPorts::kRollerDeploy)) {
-    printf("release Intake retract\n");
     OI::intakeDeploy = false;
     OI::cargo->intakeRetract();
   }
