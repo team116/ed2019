@@ -94,6 +94,12 @@ class OI {
   void process();
   void upOrDown(LiftEndEffector::liftPosition currentPos, LiftEndEffector::liftPosition newPos);
   void processRoller(int buttonBox2Buttons);
+ void processLifter();
+ void processElevator () ;
+ void processHatch();
+ void processTipper();
+ void processManualLift(int buttonBox1Buttons, int buttonBox2Buttons);
+
 
  private:
   // Instances

@@ -65,7 +65,7 @@ void OI::upOrDown(LiftEndEffector::liftPosition currentPos,
 }
 
 //*************************************  Ball intake  ********************************
-void OI::processRoller( int buttonBox2Buttons ) {
+void OI::processRoller(int buttonBox2Buttons) {
   volatile double rollerSpeed;
   // Deploy Intake
   if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2, OIPorts::kRollerDeploy)) {
@@ -108,8 +108,211 @@ void OI::processRoller( int buttonBox2Buttons ) {
     OI::cargo->intakeMovement(CargoEndEffector::Direction::OFF, 0.0);
   }
 }
-
 //********************************** END Ball intake  ********************************
+
+void OI::processLifter() {
+  //******************************** Lifter Related  **********************************
+
+  // take lifter to the bottom
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kLifterBottom)) {
+    if (!(OI::disableLiftSensor)) {
+      OI::selectBottomPos = true;
+      lift->bottomPos(lift->liftPos);
+    }
+  }
+
+  // Take lifter to the cargo position
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kCargoBay)) {
+    if (!(OI::disableLiftSensor)) {
+      OI::selectCargoBayPos = true;
+      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTBTMCARGO);
+    }
+  }
+
+  // take lifter to the rocket bottom for Cargo or Hatches
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketBottomPos)) {
+    // use OI::intakeDeploy = true to select rocket positions
+    if (!(OI::disableLiftSensor)) {
+      OI::selectRocketBottomPos = true;
+      if (OI::intakeDeploy) {  // we're dealing with hatches
+        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::LOADER);
+      } else {
+        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTBTMCARGO);
+      }
+    } else {
+      printf("Lift Sensor Disabled!");
+    }
+  }
+
+  // take lifter to the rocket mid for Cargo or Hatches
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketMidPos)) {
+    // use OI::intakeDeploy = true to select rocket positions
+    if (!(OI::disableLiftSensor)) {
+      OI::selectRocketMidPos = true;
+      if (OI::intakeDeploy) {  // we're dealing with hatches
+        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTMIDHATCH);
+      } else {
+        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTMIDCARGO);
+      }
+    } else {
+      printf("Lift Sensor Disabled!");
+    }
+  }
+
+  // take lifter to the rocket top for Cargo or Hatches
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketTopPos)) {
+    // use OI::intakeDeploy = true to select rocket positions
+    if (!OI::disableLiftSensor) {
+      OI::selectRocketTopPos = true;
+      if (OI::intakeDeploy) {  // we're dealing with hatches
+        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTTOPHATCH);
+      } else {
+        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTTOPCARGO);
+      }
+    } else {
+      printf("Lift Sensor Disabled!");
+    }
+  }
+}
+//**************************** END Lifter Related  **********************************
+
+//****************************** Elevator Related  **********************************
+void OI::processElevator() {
+  volatile double elevatorY = 0.0;
+  // Use the Big Red Joystick for the Elevator
+  elevatorY = ds.GetStickAxis(OIPorts::kJoystickChannel1, OIPorts::kJoy1YAxis);
+  frc::SmartDashboard::PutNumber("Elevator Joystick value", elevatorY);
+
+  // Going up
+  if (elevatorY < -0.2) {
+    // Move up
+    tipper->tipClimb(1.0, OI::disableLiftSensor);
+  }
+
+  // Going down
+  if (elevatorY > 0.2) {
+    // Move down
+    tipper->tipLower(1.0);
+  }
+
+  // stop the elevator motor
+  if ((elevatorY < 0.2) && (elevatorY > -0.2)) {
+    tipper->tipStop();
+  }
+}
+//*************************** END Elevator Related  **********************************
+
+//****************************** Hatch Related  **********************************
+void OI::processHatch() {
+  // Deploy Hatch
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2, OIPorts::kHatchDeploy)) {
+    //  if (buttonBox2Buttons & (1 << (OIPorts::kHatchDeploy - 1))) {
+    if (!OI::hatchDeploy) {
+      printf("Deployed\n");
+      OI::hatch->hatchDeploy();
+      OI::hatchDeploy = true;
+    }
+  }
+
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel2, OIPorts::kHatchDeploy)) {
+    printf("retract\n");
+    OI::hatchDeploy = false;
+    OI::hatch->hatchRetract();
+  }
+}
+//************************** END Hatch Related  **********************************
+
+//********************************** Robot Tipper  ***********************************
+void OI::processTipper() {
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRobotTipOver)) {
+    OI::robotTip = true;
+    OI::tipper->tipDeploy();
+  }
+
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1, OIPorts::kRobotTipOver)) {
+    OI::robotTip = false;
+    OI::tipper->tipRetract();
+  }
+}
+//******************************* END Robot Tipper  *********************************
+
+//******************************* Manual Lift Code  **********************************
+void OI::processManualLift(int buttonBox1Buttons, int buttonBox2Buttons) {
+
+ // Move lifter up
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2,  OIPorts::kLifterUp)) {
+    OI::moveLifterUp = true;
+    OI::moveLifterDown = false;
+    lift->manualLiftUp();
+  }
+
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2,  OIPorts::kLifterDown)) {
+    OI::moveLifterUp = true;
+    OI::moveLifterDown = false;
+    lift->manualLiftDown();
+  }
+
+  // Alternate Move lifter up Xbox Y
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketBottomPos)) {
+    OI::moveLifterUp = true;
+    OI::moveLifterDown = false;
+    lift->manualLiftDown();
+  }
+
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1, OIPorts::kRocketBottomPos)) {
+    OI::moveLifterUp = false;
+    OI::moveLifterDown = false;
+    lift->manualLiftStop();
+  }
+
+  // Alternate Move lifter down on Xbox A
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketMidPos)) {
+    OI::moveLifterDown = true;
+    OI::moveLifterUp = false;
+    lift->manualLiftUp();
+  }
+
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1, OIPorts::kRocketMidPos)) {
+    OI::moveLifterUp = false;
+    OI::moveLifterDown = false;
+    lift->manualLiftStop();
+  }
+
+  // Alternate Move lifter up Xbox Y
+  if (ds.GetStickButtonPressed(OIPorts::kXboxChannel, OIPorts::kXboxYButton)) {
+    OI::moveLifterUp = true;
+    OI::moveLifterDown = false;
+    lift->manualLiftDown();
+  }
+
+  if (ds.GetStickButtonReleased(OIPorts::kXboxChannel, OIPorts::kXboxYButton)) {
+    OI::moveLifterUp = false;
+    OI::moveLifterDown = false;
+    lift->manualLiftStop();
+  }
+
+  // Move lifter down'
+
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2, OIPorts::kLifterDown)) {
+    OI::moveLifterDown = true;
+    OI::moveLifterUp = false;
+    lift->manualLiftUp();
+  }
+
+  // Alternate Move lifter down on Xbox A
+  if (ds.GetStickButtonPressed(OIPorts::kXboxChannel, OIPorts::kXboxAButton)) {
+    OI::moveLifterDown = true;
+    OI::moveLifterUp = false;
+    lift->manualLiftDown();
+  }
+
+  if (ds.GetStickButtonReleased(OIPorts::kXboxChannel, OIPorts::kXboxAButton)) {
+    OI::moveLifterUp = false;
+    OI::moveLifterDown = false;
+    lift->manualLiftStop();
+  }
+}
+//*************************** END Manual Lift Code  **********************************
 
 void OI::process() {
   volatile double tempX, tempY, tempRotate;
@@ -150,7 +353,7 @@ void OI::process() {
     printf("Half=F\n");
     // once released we don't scale
   }
-  //**************************  Adjust Power if Pressed ********************************
+  //************************ End Adjust Power if Pressed ********************************
 
   //***********************  Check for Disabled Sensors ********************************
   if (buttonBox1Buttons & 0x1f) {  // are any of the disable sensors on?
@@ -166,234 +369,28 @@ void OI::process() {
   }
   //*********************** END Check for Disabled Sensors *****************************
 
+  // Deal with cargo intake
   OI::processRoller(buttonBox2Buttons);
 
-  //********************************** Robot Tipper  ***********************************
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRobotTipOver)) {
-    OI::robotTip = true;
-    OI::tipper->tipDeploy();
+  // Deal with lifter
+  OI::processLifter();
+
+  // Deal with the Elevator
+  OI::processElevator();
+
+  // Deal with the Hatch
+  OI::processHatch();
+
+  // Deal with the Tipper
+  OI::processTipper();
+
+  // Deal with Manual Override on the Lift
+  OI::processManualLift( buttonBox1Buttons,  buttonBox2Buttons);
+}
+
+OI *OI::getInstance() {
+  if (INSTANCE == nullptr) {
+    INSTANCE = new OI();
   }
-
-  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1, OIPorts::kRobotTipOver)) {
-    OI::robotTip = false;
-    OI::tipper->tipRetract();
-  }
-  //******************************* END Robot Tipper  *********************************
-
-  //******************************** Lifter Related  **********************************
-
-  // take lifter to the bottom
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kLifterBottom)) {
-    if (!(OI::disableLiftSensor)) {
-      OI::selectBottomPos = true;
-      lift->bottomPos(lift->liftPos);
-    }
-  }
-
-  // Take lifter to the cargo position
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kCargoBay)) {
-    if (!(OI::disableLiftSensor)) {
-      OI::selectCargoBayPos = true;
-      upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTBTMCARGO);
-    }
-  }
-
-  // take lifter to the rocket bottom for Cargo or Hatches
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketBottomPos)) {
-    // use OI::intakeDeploy = true to select rocket positions
-    if (!(OI::disableLiftSensor)) {
-      OI::selectRocketBottomPos = true;
-      if (OI::intakeDeploy) {  // we're dealing with hatches
-        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::LOADER);
-      } else {
-        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTBTMCARGO);
-      }
-    } else {
-      printf("Lift Sensor Disabled!")
-    }
-  }
-
-  // take lifter to the rocket mid for Cargo or Hatches
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketMidPos)) {
-    // use OI::intakeDeploy = true to select rocket positions
-    if (!(OI::disableLiftSensor)) {
-      OI::selectRocketMidPos = true;
-      if (OI::intakeDeploy) {  // we're dealing with hatches
-        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTMIDHATCH);
-      } else {
-        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTMIDCARGO);
-      }
-    } else {
-      printf("Lift Sensor Disabled!")
-    }
-  }
-
-  // take lifter to the rocket top for Cargo or Hatches
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketTopPos)) {
-    // use OI::intakeDeploy = true to select rocket positions
-    if (!OI::disableLiftSensor) {
-      OI::selectRocketTopPos = true;
-      if (OI::intakeDeploy) {  // we're dealing with hatches
-        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTTOPHATCH);
-      } else {
-        upOrDown(lift->liftPos, LiftEndEffector::liftPosition::RKTTOPCARGO);
-      }
-    } else {
-      printf("Lift Sensor Disabled!")
-    }
-  }
-  //**************************** END Lifter Related  **********************************
-
-  //****************************** Elevator Related  **********************************
-  // Use the Big Red Joystick for the Elevator
-  elevatorY = ds.GetStickAxis(OIPorts::kJoystickChannel1, OIPorts::kJoy1YAxis);
-  frc::SmartDashboard::PutNumber("Elevator Joystick value", elevatorY);
-
-  // Going up
-  if (elevatorY < -0.2) {
-    // Move up
-    tipper->tipClimb(1.0, OI::disableLiftSensor);
-  }
-
-  // Going down
-  if (elevatorY > 0.2) {
-    // Move down
-    tipper->tipLower(1.0);
-  }
-
-  // stop the elevator motor
-  if ((elevatorY < 0.2) && (elevatorY > -0.2)) {
-    tipper->tipStop();
-  }
-
-  //*************************** END Elevator Related  **********************************
-
-  // Move lifter up
-  /*
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2,
-                               OIPorts::kLifterUp)) {
-    OI::moveLifterUp = true;
-    OI::moveLifterDown = false;
-  } else {
-    if (OI::moveLifterUp) {
-      OI::moveLifterDown = false;
-      OI::moveLifterUp = false;
-    }
-  }
-*/
-  // Use the Big Red Joystick for the Elevator
-  //  liftY = ds.GetStickAxis(OIPorts::kJoystickChannel2, OIPorts::kJoy2YAxis);
-  //  frc::SmartDashboard::PutNumber("Lift Joystick value", liftY);
-  // Going up
-  /*
-    if (liftY < -0.13) {
-      // Move up
-      OI::moveLifterUp = true;
-      lift->manualLiftDown();
-    }
-
-    // Going down
-    if (liftY > 0.3) {
-      // Move down
-      lift->manualLiftUp();
-    }
-
-    // stop the elevator motor
-    if ((liftY < 0.2) && (liftY > -0.08)) {
-      lift->manualLiftStop();
-    }
-  */
-
-  // Alternate Move lifter up Xbox Y
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketBottomPos)) {
-    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
-    OI::moveLifterUp = true;
-    OI::moveLifterDown = false;
-    lift->manualLiftDown();
-  }
-
-  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1, OIPorts::kRocketBottomPos)) {
-    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
-    OI::moveLifterUp = false;
-    OI::moveLifterDown = false;
-    lift->manualLiftStop();
-  }
-
-  // Alternate Move lifter down on Xbox A
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketMidPos)) {
-    //  if (xboxButtons & (1 << (OIPorts::kXboxAButton - 1))) {
-    OI::moveLifterDown = true;
-    OI::moveLifterUp = false;
-    lift->manualLiftUp();
-  }
-
-  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1, OIPorts::kRocketMidPos)) {
-    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
-    OI::moveLifterUp = false;
-    OI::moveLifterDown = false;
-    lift->manualLiftStop();
-  }
-
-  // Alternate Move lifter up Xbox Y
-  if (ds.GetStickButtonPressed(OIPorts::kXboxChannel, OIPorts::kXboxYButton)) {
-    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
-    OI::moveLifterUp = true;
-    OI::moveLifterDown = false;
-    lift->manualLiftDown();
-  }
-
-  if (ds.GetStickButtonReleased(OIPorts::kXboxChannel, OIPorts::kXboxYButton)) {
-    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
-    OI::moveLifterUp = false;
-    OI::moveLifterDown = false;
-    lift->manualLiftStop();
-  }
-
-  // Move lifter down'
-
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2, OIPorts::kLifterDown)) {
-    //  if (buttonBox2Buttons & (1 << (OIPorts::kLifterDown - 1))) {
-    OI::moveLifterDown = true;
-    OI::moveLifterUp = false;
-    lift->manualLiftUp();
-  }
-
-  // Alternate Move lifter down on Xbox A
-  if (ds.GetStickButtonPressed(OIPorts::kXboxChannel, OIPorts::kXboxAButton)) {
-    //  if (xboxButtons & (1 << (OIPorts::kXboxAButton - 1))) {
-    OI::moveLifterDown = true;
-    OI::moveLifterUp = false;
-    lift->manualLiftDown();
-  }
-
-  if (ds.GetStickButtonReleased(OIPorts::kXboxChannel, OIPorts::kXboxAButton)) {
-    //  if (xboxButtons & (1 << (OIPorts::kXboxYButton - 1))) {
-    OI::moveLifterUp = false;
-    OI::moveLifterDown = false;
-    lift->manualLiftStop();
-  }
-
-  //****************************** Hatch Related  **********************************
-  // Deploy Hatch
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2, OIPorts::kHatchDeploy)) {
-    //  if (buttonBox2Buttons & (1 << (OIPorts::kHatchDeploy - 1))) {
-    if (!OI::hatchDeploy) {
-      printf("Deployed\n");
-      OI::hatch->hatchDeploy();
-      OI::hatchDeploy = true;
-    }
-  }
-
-  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel2, OIPorts::kHatchDeploy)) {
-    printf("retract\n");
-    OI::hatchDeploy = false;
-    OI::hatch->hatchRetract();
-  }
-  //****************************** Hatch Related  **********************************
-
-  OI *OI::getInstance() {
-    if (INSTANCE == nullptr) {
-      INSTANCE = new OI();
-    }
-    return INSTANCE;
-  }
+  return INSTANCE;
+}
