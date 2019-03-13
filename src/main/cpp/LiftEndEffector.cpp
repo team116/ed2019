@@ -14,8 +14,6 @@ WPI_TalonSRX* m_LiftMotor;
 
 LiftEndEffector* LiftEndEffector::INSTANCE = nullptr;
 LiftEndEffector* liftEF;
-frc::DigitalInput* bottomLS;
-frc::DigitalInput* liftLS;
 frc::DigitalInput* threadLSPlaceHolder;
 frc::Timer* liftTimer;
 sem_t lifterSem;
@@ -33,16 +31,21 @@ static void LifterThread() {
     liftTimeOut = false;
 
     if (liftEF->liftDestinationIsBottom) {  // Are we going to the bottom?
-      threadLSPlaceHolder = bottomLS;
+      threadLSPlaceHolder = liftEF->bottomLS;
     } else {
-      threadLSPlaceHolder = liftLS;  // Nope we're using the lift LS instead
+      threadLSPlaceHolder = liftEF->liftLS;  // Nope we're using the lift LS instead
     }
     liftTimer->Start();
     if (!liftEF->disableSensor) {  // sensor is active
       while (liftEF->numClicks) {
-        while ((threadLSPlaceHolder->Get()) &&
-               !(liftTimeOut)) {  //  Get() is true is switch is not pushed
-          frc::Wait(0.2);         // check every .2 seconds
+        if (liftEF->currentDirection == LiftEndEffector::UP) {
+          m_LiftMotor->Set(-(liftEF->liftMotorSpeed));
+        } else if (liftEF->currentDirection == LiftEndEffector::DOWN) {
+          m_LiftMotor->Set(liftEF->liftMotorSpeed);
+        }
+        while ((threadLSPlaceHolder->Get()) && !(liftTimeOut)) {
+          //  Get() is true is switch is not pushed
+          frc::Wait(0.2);  // check every .2 seconds
           if (liftTimer->Get() >
               LiftEndEffector::MAX_TIME_OUT) {  // Whoops!  We timed out
             liftTimeOut = true;
@@ -80,8 +83,8 @@ static void LifterThread() {
 
 LiftEndEffector::LiftEndEffector() {
   // put initialization code into the constructor
-  liftLS = new frc::DigitalInput(RobotPorts::kLiftLimSw);
-  bottomLS = new frc::DigitalInput(RobotPorts::kBottomLimSw);
+  LiftEndEffector::liftLS = new frc::DigitalInput(RobotPorts::kLiftLimSw);
+  LiftEndEffector::bottomLS = new frc::DigitalInput(RobotPorts::kBottomLimSw);
   LiftEndEffector::liftPos = BOTTOM;
   LiftEndEffector::currentDirection = STOPPED;
   LiftEndEffector::liftMotorSpeed = 1.0;  // set the motorspeed
@@ -122,39 +125,34 @@ void LiftEndEffector::liftTimerStart() { liftTimer->Start(); }
 
 void LiftEndEffector::liftTimerStop() { liftTimer->Stop(); }
 
-void LiftEndEffector::liftUp(int numSwitches, bool disSensor) {
+void LiftEndEffector::liftUp(int numSwitches) {
   // without the sensor, this does nothing
-  if (!disSensor) {
-  }
+  liftEF->currentDirection = LiftEndEffector::direction::UP;
+  liftEF->liftDestinationIsBottom = false;
+  liftEF->numClicks = numSwitches;
+  // make it so
+  sem_post(&lifterSem);
 }
 
-void LiftEndEffector::liftDown(int numSwitches, bool disableSensor) {
+void LiftEndEffector::liftDown(int numSwitches) {
   // without the sensor, this does nothing
-  if (!disableSensor) {
-    // we need to track the number of senso clicks
-    while (!(liftLS->Get())) {
-      frc::Wait(0.2);  // check every .2 seconds
-    }
-  }
+  liftEF->currentDirection = LiftEndEffector::direction::DOWN;
+  liftEF->liftDestinationIsBottom = false;
+  liftEF->numClicks = numSwitches;
+  // make it so
+  sem_post(&lifterSem);
 }
 
-void LiftEndEffector::bottomPos(bool disableSensor) {
+void LiftEndEffector::bottomPos(int numSwitches) {
   // without the sensor, this does nothing
-  int numSwitchesToGo = 0;
-  if (!disableSensor) {
-    if (LiftEndEffector::liftPos > BOTTOM) {
-      numSwitchesToGo = LiftEndEffector::liftPos;  // This is the number of switches to go
-      if (!disableSensor) {
-        // we need to track the number of sensor clicks
-        while (!(liftLS->Get())) {
-          frc::Wait(0.2);  // check every .2 seconds
-        }
-      }
-    }
-  }
+  liftEF->liftDestinationIsBottom = true;
+  liftEF->currentDirection = LiftEndEffector::direction::DOWN;
+  liftEF->numClicks = numSwitches;
+  // make it so
+  sem_post(&lifterSem);
 }
 
-void LiftEndEffector::cargoPos(int numSwitches, bool disableSensor) {
+void LiftEndEffector::cargoPos(int numSwitches) {
   // without the sensor, this does nothing
   if (!disableSensor) {
     if (LiftEndEffector::liftPos < CARGOBAY) {

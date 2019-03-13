@@ -42,15 +42,18 @@ class LiftEndEffector {
   bool liftDestinationIsBottom;
   bool disableSensor;
 
+  frc::DigitalInput* bottomLS;
+  frc::DigitalInput* liftLS;
+
   static const int MAX_TIME_OUT = 4.0;   // time out for the lift travel
 
-  void liftUp(int numSwitches, bool disableSensor);
-  void liftDown(int numSwitches, bool disableSensor);
+  void liftUp(int numSwitches);
+  void liftDown(int numSwitches);
   void manualLiftUp();
   void manualLiftDown();
   void manualLiftStop();
-  void bottomPos(bool disableSensor);
-  void cargoPos(int numSwitches, bool disableSensor);
+  void bottomPos(int numSwitches);
+  void cargoPos(int numSwitches);
   void liftTimerReset();
   void liftTimerStart();
   void liftTimerStop();

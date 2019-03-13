@@ -13,6 +13,7 @@
 namespace RobotPorts {
 // PDP CAN bus ID -- Must be ID 0 for WPILib to be able to read the current
 constexpr int kPDPChannel = 0;
+constexpr int kLiftMotorChannel = 13;   // PDP slot that motor controller is attached to
 
 // Miscellaneous CAN IDs
 constexpr int kCanifierChannel = 6;

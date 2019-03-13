@@ -93,6 +93,7 @@ class OI {
   static OI *getInstance();
   void process();
   void upOrDown(LiftEndEffector::liftPosition currentPos, LiftEndEffector::liftPosition newPos);
+  void processRoller(int buttonBox2Buttons);
 
  private:
   // Instances
