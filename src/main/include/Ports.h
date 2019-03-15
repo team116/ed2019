@@ -8,7 +8,7 @@
 #define SRC_PORTS_H_
 
 //#define EDV21 1
-#define EDV21 1
+#undef EDV21
 
 namespace RobotPorts {
 // PDP CAN bus ID -- Must be ID 0 for WPILib to be able to read the current

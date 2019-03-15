@@ -96,13 +96,14 @@ LiftEndEffector::LiftEndEffector() {
   LiftEndEffector::numClicks = 0;
   LiftEndEffector::liftDestinationIsBottom = false;
   LiftEndEffector::disableSensor = false;
-
+/*
   try {
     liftEF = LiftEndEffector::getInstance();
   } catch (std::exception& e) {
     frc::DriverStation::ReportError("Error initializing OI object");
     frc::DriverStation::ReportError(e.what());
   }
+*/
 
 #if defined(__linux__)
   std::thread lifterThread(LifterThread);
@@ -182,6 +183,7 @@ void LiftEndEffector::manualLiftStop() {
 LiftEndEffector* LiftEndEffector::getInstance() {
   if (INSTANCE == nullptr) {
     INSTANCE = new LiftEndEffector();
+    liftEF = INSTANCE;
   }
   return INSTANCE;
 }

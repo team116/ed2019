@@ -110,8 +110,8 @@ void OI::processRoller(int buttonBox2Buttons) {
 }
 //********************************** END Ball intake  ********************************
 
+//******************************** Lifter Related  **********************************
 void OI::processLifter() {
-  //******************************** Lifter Related  **********************************
 
   // take lifter to the bottom
   if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kLifterBottom)) {
@@ -347,10 +347,8 @@ void OI::process() {
   //**************************  Adjust Power if Pressed ********************************
   if (xboxButtons & (1 << (OIPorts::kXboxRightBumperButton - 1))) {
     OI::halfPower = true;
-    printf("Half=T\n");
   } else {
     OI::halfPower = false;
-    printf("Half=F\n");
     // once released we don't scale
   }
   //************************ End Adjust Power if Pressed ********************************
