@@ -112,7 +112,6 @@ void OI::processRoller(int buttonBox2Buttons) {
 
 //******************************** Lifter Related  **********************************
 void OI::processLifter() {
-
   // take lifter to the bottom
   if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kLifterBottom)) {
     if (!(OI::disableLiftSensor)) {
@@ -238,41 +237,26 @@ void OI::processTipper() {
 
 //******************************* Manual Lift Code  **********************************
 void OI::processManualLift(int buttonBox1Buttons, int buttonBox2Buttons) {
-
- // Move lifter up
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2,  OIPorts::kLifterUp)) {
+  // Move lifter up
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2, OIPorts::kLifterUp)) {
     OI::moveLifterUp = true;
     OI::moveLifterDown = false;
     lift->manualLiftUp();
   }
 
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2,  OIPorts::kLifterDown)) {
-    OI::moveLifterUp = true;
-    OI::moveLifterDown = false;
-    lift->manualLiftDown();
-  }
-
-  // Alternate Move lifter up Xbox Y
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketBottomPos)) {
-    OI::moveLifterUp = true;
-    OI::moveLifterDown = false;
-    lift->manualLiftDown();
-  }
-
-  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1, OIPorts::kRocketBottomPos)) {
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel2, OIPorts::kLifterUp)) {
     OI::moveLifterUp = false;
     OI::moveLifterDown = false;
     lift->manualLiftStop();
   }
 
-  // Alternate Move lifter down on Xbox A
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRocketMidPos)) {
-    OI::moveLifterDown = true;
-    OI::moveLifterUp = false;
-    lift->manualLiftUp();
+  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2, OIPorts::kLifterDown)) {
+    OI::moveLifterUp = true;
+    OI::moveLifterDown = false;
+    lift->manualLiftDown();
   }
 
-  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1, OIPorts::kRocketMidPos)) {
+  if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel2, OIPorts::kLifterDown)) {
     OI::moveLifterUp = false;
     OI::moveLifterDown = false;
     lift->manualLiftStop();
@@ -282,21 +266,13 @@ void OI::processManualLift(int buttonBox1Buttons, int buttonBox2Buttons) {
   if (ds.GetStickButtonPressed(OIPorts::kXboxChannel, OIPorts::kXboxYButton)) {
     OI::moveLifterUp = true;
     OI::moveLifterDown = false;
-    lift->manualLiftDown();
+    lift->manualLiftUp();
   }
 
   if (ds.GetStickButtonReleased(OIPorts::kXboxChannel, OIPorts::kXboxYButton)) {
     OI::moveLifterUp = false;
     OI::moveLifterDown = false;
     lift->manualLiftStop();
-  }
-
-  // Move lifter down'
-
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2, OIPorts::kLifterDown)) {
-    OI::moveLifterDown = true;
-    OI::moveLifterUp = false;
-    lift->manualLiftUp();
   }
 
   // Alternate Move lifter down on Xbox A
@@ -354,6 +330,26 @@ void OI::process() {
   //************************ End Adjust Power if Pressed ********************************
 
   //***********************  Check for Disabled Sensors ********************************
+/*  // Test code
+  bool statusShown = false;
+  int loopCnt = 0;
+
+  if (!statusShown) {
+    printf("buttonBox1Buttons = 0x%x\n", buttonBox1Buttons);
+    statusShown = true;
+  }
+  loopCnt++;
+  if ((loopCnt % 100000) == 0) {
+    statusShown = false;
+  }
+*/
+  // Reset Switch sense
+  OI::disableBottomSensor = false;
+  OI::disableLiftSensor = false;
+  OI::disableCargoSensor = false;
+  OI::disableTipperSensor = false;
+  OI::disableSensor5 = false;
+
   if (buttonBox1Buttons & 0x1f) {  // are any of the disable sensors on?
     // Physically on OI box, up is on (0) and down if off (1)
     // The answer should be enabled (up -- on=0 bit) if sensors are working
@@ -365,6 +361,7 @@ void OI::process() {
     OI::disableTipperSensor = (buttonBox1Buttons & 0x8);  // 4 bit
     OI::disableSensor5 = (buttonBox1Buttons & 0x10);      // 5 bit
   }
+
   //*********************** END Check for Disabled Sensors *****************************
 
   // Deal with cargo intake
@@ -383,7 +380,7 @@ void OI::process() {
   OI::processTipper();
 
   // Deal with Manual Override on the Lift
-  OI::processManualLift( buttonBox1Buttons,  buttonBox2Buttons);
+  OI::processManualLift(buttonBox1Buttons, buttonBox2Buttons);
 }
 
 OI *OI::getInstance() {

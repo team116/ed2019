@@ -31,8 +31,10 @@ class TipperEndEffector {
 
 #ifdef EDV21
   WPI_VictorSPX m_TipperMotor{RobotPorts::kTippingChannel};
+  WPI_VictorSPX m_TipperMotor2{RobotPorts::kTippingChannel2};
 #else
   WPI_TalonSRX m_TipperMotor{RobotPorts::kTippingChannel};
+  WPI_TalonSRX m_TipperMotor2{RobotPorts::kTippingChannel2};
 #endif
 
  private:

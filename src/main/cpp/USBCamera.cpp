@@ -6,6 +6,7 @@
 #include <USBCamera.h>
 #include "Ports.h"
 
+
 USBCamera* USBCamera::INSTANCE = nullptr;
 
 USBCamera::USBCamera() {
@@ -23,7 +24,7 @@ USBCamera::USBCamera() {
 
 USBCamera* USBCamera::getInstance() {
     if (INSTANCE == nullptr) {
-        INSTANCE = new USBCamera();
+        INSTANCE = new USBCamera();  // instance of the class
     }
     return INSTANCE;
 }

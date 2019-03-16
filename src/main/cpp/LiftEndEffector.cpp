@@ -30,11 +30,14 @@ static void LifterThread() {
     liftTimer->Reset();
     liftTimeOut = false;
 
+    printf("NumClicks = %d\n", liftEF->numClicks);
+
     if (liftEF->liftDestinationIsBottom) {  // Are we going to the bottom?
       threadLSPlaceHolder = liftEF->bottomLS;
     } else {
       threadLSPlaceHolder = liftEF->liftLS;  // Nope we're using the lift LS instead
     }
+
     liftTimer->Start();
     if (!liftEF->disableSensor) {  // sensor is active
       while (liftEF->numClicks) {
@@ -49,6 +52,7 @@ static void LifterThread() {
           if (liftTimer->Get() >
               LiftEndEffector::MAX_TIME_OUT) {  // Whoops!  We timed out
             liftTimeOut = true;
+            printf("Timeout in While = %d\n", liftEF->numClicks);
             liftEF->manualLiftStop();  // We got abort so stop the lift
             break;
           }
@@ -57,9 +61,11 @@ static void LifterThread() {
           liftEF->numClicks--;
           if (liftEF->currentDirection ==  LiftEndEffector::direction::UP) {  
             liftEF->liftPos + 1;     // We're going up
+            printf("Going Up Pos = %d\n", liftEF->liftPos);
           } else {
             if (liftEF->currentDirection ==  LiftEndEffector::direction::DOWN) {  
               liftEF->liftPos - 1;   // We're going down
+              printf("Going DN Pos = %d\n", liftEF->liftPos);
             }
           }
         } else {

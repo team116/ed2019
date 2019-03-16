@@ -16,6 +16,7 @@ TipperEndEffector::TipperEndEffector() {
   // put initialization code into the constructor
   Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kOff);
   Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kOff);
+  m_TipperMotor2.Follow(m_TipperMotor);
   TipperEndEffector::elevatorLS =
       new frc::DigitalInput(RobotPorts::kElevatorLimSw);
 }
@@ -29,7 +30,9 @@ void TipperEndEffector::tipClimb(double speed, bool disableSensor) {
   }
 }
 
-void TipperEndEffector::tipLower(double speed) { m_TipperMotor.Set(-speed); }
+void TipperEndEffector::tipLower(double speed) { 
+  m_TipperMotor.Set(-speed); 
+  }
 
 void TipperEndEffector::tipStop() { m_TipperMotor.Set(0.0); }
 

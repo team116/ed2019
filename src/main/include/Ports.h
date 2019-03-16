@@ -9,6 +9,10 @@
 
 //#define EDV21 1
 #undef EDV21
+// Use the USB Camera
+#undef USEUSBCAMERA
+// Use the Axis IP Camera
+#define USEAXISCAMERA
 
 namespace RobotPorts {
 // PDP CAN bus ID -- Must be ID 0 for WPILib to be able to read the current
@@ -27,6 +31,7 @@ constexpr int kRearRightChannel  = 4;
 constexpr int kBallIntakeChannel = 14;
 constexpr int kLiftChannel       = 15;
 constexpr int kTippingChannel    = 16;
+constexpr int kTippingChannel2   = 17;
 
 // Digital I/O from RoboRIO  --  Be sure the rename these to something more
 // meaningful
@@ -109,18 +114,18 @@ constexpr int kXboxLeftJoyButton     = 9;
 constexpr int kXboxRightJoyButton    = 10;
 
 // Second external Joystick Interface  -- Digital only USB interface (Generic USB)
-constexpr int kSensor1Enable   = 1;   // Map 1
-constexpr int kSensor2Enable   = 2;   // Map 2
-constexpr int kSensor3Enable   = 3;   // Map 3
-constexpr int kSensor4Enable   = 4;   // Map 4
-constexpr int kSensor5Enable   = 5;   // Map 5
-constexpr int kRobotClimb      = 6;   // Empty
-constexpr int kRocketTopPos    = 7;   // Map 6
-constexpr int kRocketMidPos    = 8;   // Map 12
-constexpr int kRocketBottomPos = 9;   // Map 15
-constexpr int kCargoBay        = 10;  // Map 13
-constexpr int kLifterBottom    = 11;  // Map 16
-constexpr int kRobotTipOver    = 12;  // Map 7
+constexpr int kDisableBottomSensor  = 1;   // Map 1
+constexpr int kDisableLiftSensor    = 2;   // Map 2
+constexpr int kDisableCargoSensor   = 3;   // Map 3
+constexpr int kDdisableTipperSensor = 4;   // Map 4
+constexpr int kSensor5Enable        = 5;   // Map 5
+constexpr int kRobotClimb           = 6;   // Empty
+constexpr int kRocketTopPos         = 7;   // Map 6
+constexpr int kRocketMidPos         = 8;   // Map 12
+constexpr int kRocketBottomPos      = 9;   // Map 15
+constexpr int kCargoBay             = 10;  // Map 13
+constexpr int kLifterBottom         = 11;  // Map 16
+constexpr int kRobotTipOver         = 12;  // Map 7
 
 constexpr int kJoy1XAxis = 0;
 constexpr int kJoy1YAxis = 1;
