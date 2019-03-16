@@ -55,20 +55,30 @@ static void LifterThread() {
         }
         if (!liftTimeOut) {
           liftEF->numClicks--;
-          if (liftEF->currentDirection ==
-              LiftEndEffector::direction::UP) {  // We're going up
-            liftEF->liftPos + 1;
+          if (liftEF->currentDirection ==  LiftEndEffector::direction::UP) {  
+            liftEF->liftPos + 1;     // We're going up
           } else {
-            if (liftEF->currentDirection ==
-                LiftEndEffector::direction::DOWN) {  // We're going down
-              liftEF->liftPos - 1;
+            if (liftEF->currentDirection ==  LiftEndEffector::direction::DOWN) {  
+              liftEF->liftPos - 1;   // We're going down
             }
           }
         } else {
+          liftTimeOut = true;
+          liftEF->liftIsActive = false;
+          liftTimer->Stop();
           liftEF->manualLiftStop();  //  make sure the lift is stopped
+          printf("Timeout NumClicks = %d\n", liftEF->numClicks);
+          liftEF->numClicks = 0;
+          break;  // Break out of the numClicks loop
         }
       }
+      if (!liftTimeOut) {
+        movementComplete = true;
+      }
+      liftTimer->Stop();
       liftEF->manualLiftStop();  //  We've arrives so stop the motor
+      printf("After while NumClicks = %d\n", liftEF->numClicks);
+      liftEF->numClicks = 0;
     } else {
       // sensor is disabled so we shouldn't be in the tread at all
       printf("Lift sensor is disabled!  Use Manual Mode!\n");
@@ -96,14 +106,14 @@ LiftEndEffector::LiftEndEffector() {
   LiftEndEffector::numClicks = 0;
   LiftEndEffector::liftDestinationIsBottom = false;
   LiftEndEffector::disableSensor = false;
-/*
-  try {
-    liftEF = LiftEndEffector::getInstance();
-  } catch (std::exception& e) {
-    frc::DriverStation::ReportError("Error initializing OI object");
-    frc::DriverStation::ReportError(e.what());
-  }
-*/
+  /*
+    try {
+      liftEF = LiftEndEffector::getInstance();
+    } catch (std::exception& e) {
+      frc::DriverStation::ReportError("Error initializing OI object");
+      frc::DriverStation::ReportError(e.what());
+    }
+  */
 
 #if defined(__linux__)
   std::thread lifterThread(LifterThread);
