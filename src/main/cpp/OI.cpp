@@ -330,19 +330,7 @@ void OI::process() {
   //************************ End Adjust Power if Pressed ********************************
 
   //***********************  Check for Disabled Sensors ********************************
-/*  // Test code
-  bool statusShown = false;
-  int loopCnt = 0;
 
-  if (!statusShown) {
-    printf("buttonBox1Buttons = 0x%x\n", buttonBox1Buttons);
-    statusShown = true;
-  }
-  loopCnt++;
-  if ((loopCnt % 100000) == 0) {
-    statusShown = false;
-  }
-*/
   // Reset Switch sense
   OI::disableBottomSensor = false;
   OI::disableLiftSensor = false;

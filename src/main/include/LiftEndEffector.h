@@ -53,7 +53,6 @@ class LiftEndEffector {
   void manualLiftDown();
   void manualLiftStop();
   void bottomPos(int numSwitches);
-  void cargoPos(int numSwitches);
   void liftTimerReset();
   void liftTimerStart();
   void liftTimerStop();

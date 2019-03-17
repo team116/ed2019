@@ -59,12 +59,14 @@ static void LifterThread() {
         }
         if (!liftTimeOut) {
           liftEF->numClicks--;
-          if (liftEF->currentDirection ==  LiftEndEffector::direction::UP) {  
-            liftEF->liftPos + 1;     // We're going up
+          if (liftEF->currentDirection == LiftEndEffector::direction::UP) {
+            // lift gowing up
+            liftEF->liftPos = (enum LiftEndEffector::liftPosition)(liftEF->liftPos + 1);
             printf("Going Up Pos = %d\n", liftEF->liftPos);
           } else {
-            if (liftEF->currentDirection ==  LiftEndEffector::direction::DOWN) {  
-              liftEF->liftPos - 1;   // We're going down
+            if (liftEF->currentDirection == LiftEndEffector::direction::DOWN) {
+              // lift gowing down
+              liftEF->liftPos = (enum LiftEndEffector::liftPosition)(liftEF->liftPos - 1);
               printf("Going DN Pos = %d\n", liftEF->liftPos);
             }
           }
@@ -167,18 +169,6 @@ void LiftEndEffector::bottomPos(int numSwitches) {
   liftEF->numClicks = numSwitches;
   // make it so
   sem_post(&lifterSem);
-}
-
-void LiftEndEffector::cargoPos(int numSwitches) {
-  // without the sensor, this does nothing
-  if (!disableSensor) {
-    if (LiftEndEffector::liftPos < CARGOBAY) {
-      // we need to go up
-    }
-    if (LiftEndEffector::liftPos > CARGOBAY) {
-      // we need to go down
-    }
-  }
 }
 
 void LiftEndEffector::manualLiftUp() {
