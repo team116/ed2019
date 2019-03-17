@@ -45,7 +45,7 @@ class LiftEndEffector {
   frc::DigitalInput* bottomLS;
   frc::DigitalInput* liftLS;
 
-  static const int MAX_TIME_OUT = 4.0;   // time out for the lift travel
+  static const int MAX_TIME_OUT = 4.0;   // time out for the lift travel in seconds
 
   void liftUp(int numSwitches);
   void liftDown(int numSwitches);
