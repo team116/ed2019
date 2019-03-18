@@ -13,6 +13,7 @@
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
 #include <semaphore.h>
+#include <Utils.h>
 
 class LiftEndEffector {
  public:
@@ -58,6 +59,7 @@ class LiftEndEffector {
   void liftTimerStop();
  
  private:
+  Utils *utils;
   LiftEndEffector();
   static LiftEndEffector *INSTANCE;
 };
