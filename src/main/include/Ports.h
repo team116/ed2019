@@ -13,6 +13,7 @@
 #undef USEUSBCAMERA
 // Use the Axis IP Camera
 #define USEAXISCAMERA
+#define HASPIGEONIMU
 
 namespace RobotPorts {
 // PDP CAN bus ID -- Must be ID 0 for WPILib to be able to read the current
@@ -104,10 +105,10 @@ constexpr int kXboxRYAxis            = 5;
 // Digital buttons
 constexpr int kXboxAButton           = 1;  // Lifter down
 constexpr int kXboxBButton           = 2;  
-constexpr int kXboxXButton           = 3;
+constexpr int kXboxXButton           = 3;  // Update Gains for pigeon
 constexpr int kXboxYButton           = 4;  // Lifter up
 constexpr int kXboxLeftBumperButton  = 5;  // Drive Straight
-constexpr int kXboxRightBumperButton = 6;  // Field centric/Robot Centeric
+constexpr int kXboxRightBumperButton = 6;  // Half Speed
 constexpr int kXboxBackButton        = 7;
 constexpr int kXboxStartButton       = 8;
 constexpr int kXboxLeftJoyButton     = 9;
@@ -118,7 +119,7 @@ constexpr int kDisableBottomSensor  = 1;   // Map 1
 constexpr int kDisableLiftSensor    = 2;   // Map 2
 constexpr int kDisableCargoSensor   = 3;   // Map 3
 constexpr int kDdisableTipperSensor = 4;   // Map 4
-constexpr int kSensor5Enable        = 5;   // Map 5
+constexpr int kFieldCentricMode     = 5;   // Map 5
 constexpr int kRobotClimb           = 6;   // Empty
 constexpr int kRocketTopPos         = 7;   // Map 6
 constexpr int kRocketMidPos         = 8;   // Map 12

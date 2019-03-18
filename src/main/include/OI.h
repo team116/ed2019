@@ -67,7 +67,18 @@ class OI {
   // Driver Station related
   double x, y, rotate;  // Position of joystick inputs
 
-  enum Pos { LEFT, CENTER, RIGHT };
+#ifdef HASPIGEONIMU  // Do we have the pigeon IMU?
+// Gyro Related
+  bool userWantsToGoStraight;
+  bool fieldCentric;
+  bool updateGains;
+#endif
+
+      enum Pos {
+        LEFT,
+        CENTER,
+        RIGHT
+      };
 
   enum Direction { UP, DOWN, NONE};
 

@@ -48,6 +48,11 @@ OI::OI() {
     frc::DriverStation::ReportError("Error initializing Lift object");
     frc::DriverStation::ReportError(e.what());
   }
+#ifdef HASPIGEONIMU  // Do we have the pigeon IMU?
+  userWantsToGoStraight = false;
+  fieldCentric = false;
+  updateGains = false;
+#endif
 }
 
 void OI::upOrDown(LiftEndEffector::liftPosition currentPos,
@@ -180,7 +185,6 @@ void OI::processElevator() {
   volatile double elevatorY = 0.0;
   // Use the Big Red Joystick for the Elevator
   elevatorY = ds.GetStickAxis(OIPorts::kJoystickChannel1, OIPorts::kJoy1YAxis);
-  frc::SmartDashboard::PutNumber("Elevator Joystick value", elevatorY);
 
   // Going up
   if (elevatorY < -0.2) {
@@ -310,6 +314,7 @@ void OI::process() {
   OI::x = tempX * tempX * tempX;                      // pow(tempX,3);
   OI::y = tempY * tempY * tempY;                      // pow(tempY,3);
   OI::rotate = tempRotate * tempRotate * tempRotate;  // pow(tempRotate,3)
+
   //********************** End Driver JoySticks ***************************************
 
   // Get the button status
@@ -327,6 +332,37 @@ void OI::process() {
     OI::halfPower = false;
     // once released we don't scale
   }
+
+  // Add code for Drive Straight and Field Centric
+#ifdef HASPIGEONIMU  // Do we have the pigeon IMU?
+  // Left bumper says to go straight
+  if (xboxButtons & (1 << (OIPorts::kXboxLeftBumperButton - 1))) {
+    OI::userWantsToGoStraight = true;
+  } else {
+    OI::userWantsToGoStraight = false;
+  }
+
+  // Option to update the Gains on the turn
+  if (xboxButtons & (1 << (OIPorts::kXboxXButton - 1))) {
+    OI::updateGains = true;
+  } else {
+    OI::updateGains = false;
+  }
+#endif
+
+  // Is the field centric switch set?
+  OI::fieldCentric =
+      (buttonBox1Buttons & (1 << (OIPorts::kFieldCentricMode - 1)));  // 5 bit
+  if (OI::fieldCentric) {
+#ifdef HASPIGEONIMU  // Do we have the pigeon IMU?
+    frc::SmartDashboard::PutString("Orientation", "Field-Centric");
+#else
+    frc::SmartDashboard::PutString("Orientation", "Robot-Centric");
+#endif
+  } else {
+    frc::SmartDashboard::PutString("Orientation", "Robot-Centric");
+  }
+
   //************************ End Adjust Power if Pressed ********************************
 
   //***********************  Check for Disabled Sensors ********************************
@@ -338,7 +374,7 @@ void OI::process() {
   OI::disableTipperSensor = false;
   OI::disableSensor5 = false;
 
-  if (buttonBox1Buttons & 0x1f) {  // are any of the disable sensors on?
+  if (buttonBox1Buttons & 0xf) {  // are any of the disable sensors on?
     // Physically on OI box, up is on (0) and down if off (1)
     // The answer should be enabled (up -- on=0 bit) if sensors are working
     // This uses an ugly assignment with knowledge that the bool type is
@@ -347,7 +383,6 @@ void OI::process() {
     OI::disableLiftSensor = (buttonBox1Buttons & 0x2);    // 2 bit
     OI::disableCargoSensor = (buttonBox1Buttons & 0x4);   // 3 bit
     OI::disableTipperSensor = (buttonBox1Buttons & 0x8);  // 4 bit
-    OI::disableSensor5 = (buttonBox1Buttons & 0x10);      // 5 bit
   }
 
   //*********************** END Check for Disabled Sensors *****************************
