@@ -16,6 +16,8 @@
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
 #include <frc/drive/MecanumDrive.h>
+#include <frc/shuffleboard/Shuffleboard.h>
+#include <frc/shuffleboard/ShuffleboardTab.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "Ports.h"
@@ -172,19 +174,21 @@ void Mobility::process() {
   left = Cap(left, 1.0);
   right = Cap(right, 1.0);
 
+  frc::ShuffleboardTab& GyroTab = frc::Shuffleboard::GetTab("Gyro Tab");
+
   /* some printing for easy debugging */
   if (++_printLoops > 100) {
     _printLoops = 0;
-    frc::SmartDashboard::PutNumber("Error:", targetAngle - currentAngle);
-    frc::SmartDashboard::PutNumber("Angle:", currentAngle);
-    frc::SmartDashboard::PutNumber("Rate:", currentAngularRate);
-    frc::SmartDashboard::PutNumber("noMotionBiasCount:", genStatus.noMotionBiasCount);
-    frc::SmartDashboard::PutNumber("tempCompensationCount:",
-                                   genStatus.tempCompensationCount);
+
+    GyroTab.Add("Error:", targetAngle - currentAngle);
+    GyroTab.Add("Angle:", currentAngle);
+    GyroTab.Add("Rate:", currentAngularRate);
+    GyroTab.Add("noMotionBiasCount:", genStatus.noMotionBiasCount);
+    GyroTab.Add("tempCompensationCount:", genStatus.tempCompensationCount);
     if (angleIsGood) {
-      frc::SmartDashboard::PutString("Angle is:", "Good!");
+      GyroTab.Add("Angle is:", "Good!");
     } else {
-      frc::SmartDashboard::PutString("Angle is:", "NOT Good!");
+      GyroTab.Add("Angle is:", "NOT Good!");
     }
   }
 
