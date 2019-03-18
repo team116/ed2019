@@ -173,16 +173,19 @@ void Mobility::process() {
   right = Cap(right, 1.0);
 
   /* some printing for easy debugging */
-  if (++_printLoops > 50) {
+  if (++_printLoops > 100) {
     _printLoops = 0;
-    printf("------------------------------------------\n");
-    printf("error: %f\n", targetAngle - currentAngle);
-    printf("angle: %f\n", currentAngle);
-    printf("rate: %f\n", currentAngularRate);
-    printf("noMotionBiasCount: %i\n", genStatus.noMotionBiasCount);
-    printf("tempCompensationCount: %i\n", genStatus.tempCompensationCount);
-    printf("%s\n", angleIsGood ? "Angle is good" : "Angle is NOT GOOD");
-    printf("------------------------------------------\n");
+    frc::SmartDashboard::PutNumber("Error:", targetAngle - currentAngle);
+    frc::SmartDashboard::PutNumber("Angle:", currentAngle);
+    frc::SmartDashboard::PutNumber("Rate:", currentAngularRate);
+    frc::SmartDashboard::PutNumber("noMotionBiasCount:", genStatus.noMotionBiasCount);
+    frc::SmartDashboard::PutNumber("tempCompensationCount:",
+                                   genStatus.tempCompensationCount);
+    if (angleIsGood) {
+      frc::SmartDashboard::PutString("Angle is:", "Good!");
+    } else {
+      frc::SmartDashboard::PutString("Angle is:", "NOT Good!");
+    }
   }
 
   /* press X button, Blue Button, to apply gains from webdash.  This can
@@ -210,7 +213,7 @@ void Mobility::process() {
     }
   }
 
-#else    // If the pigeon isn't enabled
+#else  // If the pigeon isn't enabled
   if (oi->halfPower) {
     m_robotDrive.DriveCartesian(oi->x / 2.0, oi->y / 2.0, oi->rotate / 2.0);
   } else {
