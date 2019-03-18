@@ -332,7 +332,9 @@ void OI::process() {
     OI::halfPower = false;
     // once released we don't scale
   }
+  //************************ End Adjust Power if Pressed ********************************
 
+  //**************************  Drive straight and field centric ********************************
   // Add code for Drive Straight and Field Centric
 #ifdef HASPIGEONIMU  // Do we have the pigeon IMU?
   // Left bumper says to go straight
@@ -362,8 +364,8 @@ void OI::process() {
   } else {
     frc::SmartDashboard::PutString("Orientation", "Robot-Centric");
   }
+  //****************** End Drive straight and field centric ****************************
 
-  //************************ End Adjust Power if Pressed ********************************
 
   //***********************  Check for Disabled Sensors ********************************
 
@@ -372,7 +374,6 @@ void OI::process() {
   OI::disableLiftSensor = false;
   OI::disableCargoSensor = false;
   OI::disableTipperSensor = false;
-  OI::disableSensor5 = false;
 
   if (buttonBox1Buttons & 0xf) {  // are any of the disable sensors on?
     // Physically on OI box, up is on (0) and down if off (1)
