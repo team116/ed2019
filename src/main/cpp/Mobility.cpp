@@ -103,8 +103,8 @@ void Mobility::process() {
   bool angleIsGood = (pigeon->GetState() == PigeonIMU::Ready) ? true : false;
   double currentAngularRate = xyz_dps[2];
   /* get input from gamepad */
-  double forwardThrottle = oi->x;
-  double turnThrottle = oi->y;
+  double forwardThrottle = oi->y;
+  double turnThrottle = oi->x;
   /* deadbands so centering joysticks always results in zero output */
   forwardThrottle = Db(forwardThrottle);
   turnThrottle = Db(turnThrottle);
@@ -179,19 +179,19 @@ void Mobility::process() {
   /* some printing for easy debugging */
   if (++_printLoops > 100) {
     _printLoops = 0;
-
-    GyroTab.Add("Error:", targetAngle - currentAngle);
-    GyroTab.Add("Angle:", currentAngle);
-    GyroTab.Add("Rate:", currentAngularRate);
-    GyroTab.Add("noMotionBiasCount:", genStatus.noMotionBiasCount);
-    GyroTab.Add("tempCompensationCount:", genStatus.tempCompensationCount);
-    if (angleIsGood) {
-      GyroTab.Add("Angle is:", "Good!");
-    } else {
-      GyroTab.Add("Angle is:", "NOT Good!");
-    }
+    /*
+        GyroTab.Add("Error:", targetAngle - currentAngle);
+        GyroTab.Add("Angle:", currentAngle);
+        GyroTab.Add("Rate:", currentAngularRate);
+        GyroTab.Add("noMotionBiasCount:", genStatus.noMotionBiasCount);
+        GyroTab.Add("tempCompensationCount:", genStatus.tempCompensationCount);
+        if (angleIsGood) {
+          GyroTab.Add("Angle is:", "Good!");
+        } else {
+          GyroTab.Add("Angle is:", "NOT Good!");
+        }
+        */
   }
-
   /* press X button, Blue Button, to apply gains from webdash.  This can
    * be replaced with your favorite means of changing gains. */
   if (oi->updateGains) {
@@ -208,12 +208,21 @@ void Mobility::process() {
     m_RearLeftMotor.Set(ControlMode::PercentOutput, left);
     m_FrontRightMotor.Set(ControlMode::PercentOutput, -1. * right);
     m_RearRightMotor.Set(ControlMode::PercentOutput, -1. * right);
-  } else if (oi->fieldCentric) {
-    if (oi->halfPower) {
-      m_robotDrive.DriveCartesian(oi->x / 2.0, oi->y / 2.0, oi->rotate / 2.0,
-                                  currentAngle);
-    } else {
-      m_robotDrive.DriveCartesian(oi->x, oi->y, oi->rotate, currentAngle);
+  } else {
+    if (oi->fieldCentric) {
+      if (oi->halfPower) {
+        m_robotDrive.DriveCartesian(oi->y / 2.0, oi->x / 2.0, oi->rotate / 2.0,
+                                    currentAngle);
+      } else {
+        m_robotDrive.DriveCartesian(oi->y, oi->x, oi->rotate, currentAngle);
+      }
+    } else {  // Robot Centric
+      if (oi->halfPower) {
+        m_robotDrive.DriveCartesian(oi->x / 2.0, oi->y /2.0, oi->rotate / 2.0);
+      } else {
+        m_robotDrive.DriveCartesian(oi->x, oi->y, oi->rotate);
+      }
+
     }
   }
 

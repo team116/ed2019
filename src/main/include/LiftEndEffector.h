@@ -57,6 +57,8 @@ class LiftEndEffector {
   void liftTimerReset();
   void liftTimerStart();
   void liftTimerStop();
+  void launchLifterThread();
+
  
  private:
   Utils *utils;

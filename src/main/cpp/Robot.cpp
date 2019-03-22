@@ -67,7 +67,7 @@ void Robot::RobotInit() {
   oi->m_chooser.AddOption("Right", oi->Pos::RIGHT);
   oi->m_chooser.SetDefaultOption("Left", oi->Pos::LEFT);
 
-  frc::SmartDashboard::PutData("Play", &oi->m_chooser);
+  frc::SmartDashboard::PutData("Starting Position", &oi->m_chooser);
 
   oi->m_destination.AddOption("Teleop", oi->Dest::TELEOP);
   oi->m_destination.AddOption("Do Not Move", oi->Dest::DONOTHING);
@@ -78,14 +78,14 @@ void Robot::RobotInit() {
   oi->m_destination.AddOption("Left Rocket", oi->Dest::LEFTROCKET);
   oi->m_destination.SetDefaultOption("Teleop", oi->Dest::TELEOP);
 
-  frc::SmartDashboard::PutData("Destination", &oi->m_destination);
+  frc::SmartDashboard::PutData("Play", &oi->m_destination);
   // Enable the closed loop compressor
   Robot::compress->SetClosedLoopControl(true);
   enabled = compress->Enabled();
   pressureSW = compress->GetPressureSwitchValue();
   currentComp = compress->GetCompressorCurrent();
-
   printf(" %d  %d  %f", enabled, pressureSW, currentComp);
+  lift->launchLifterThread();
 
 }
 

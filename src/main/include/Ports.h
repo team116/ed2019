@@ -10,9 +10,9 @@
 //#define EDV21 1
 #undef EDV21
 // Use the USB Camera
-#undef USEUSBCAMERA
+#define USEUSBCAMERA
 // Use the Axis IP Camera
-#define USEAXISCAMERA
+#undef USEAXISCAMERA
 #define HASPIGEONIMU
 
 namespace RobotPorts {

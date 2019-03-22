@@ -37,7 +37,7 @@ static void LifterThread() {
     printf("NumClicks = %d\n", liftEF->numClicks);
 
     if (liftEF->liftDestinationIsBottom) {  // Are we going to the bottom?
-      // threadLSPlaceHolder = liftEF->bottomLS;
+      threadLSPlaceHolder = liftEF->bottomLS;
       debounceSwitch = &bottomDebounce;
     } else {
       // threadLSPlaceHolder = liftEF->liftLS;  // Nope we're using the lift LS instead
@@ -52,8 +52,8 @@ static void LifterThread() {
         } else if (liftEF->currentDirection == LiftEndEffector::DOWN) {
           m_LiftMotor->Set(liftEF->liftMotorSpeed);
         }
-//        while ((threadLSPlaceHolder->Get()) && !(liftTimeOut)) {
-        while ((debounceSwitch->get()) && !(liftTimeOut)) {
+        while ((threadLSPlaceHolder->Get()) && !(liftTimeOut)) {
+//        while ((debounceSwitch->get()) && !(liftTimeOut)) {
           //  Get() is true is switch is not pushed
           frc::Wait(0.2);  // check every .2 seconds
           if (liftTimer->Get() >
@@ -130,7 +130,7 @@ LiftEndEffector::LiftEndEffector() {
     frc::DriverStation::ReportError("Error initializing Utils object");
     frc::DriverStation::ReportError(e.what());
   }
-
+/*
 #if defined(__linux__)
   std::thread lifterThread(LifterThread);
   lifterThread.detach();
@@ -138,7 +138,7 @@ LiftEndEffector::LiftEndEffector() {
   wpi::errs() << "Lifter Thread only available on Linux.\n";
   wpi::errs().flush();
 #endif
-
+*/
 #ifdef EDV21
   m_LiftMotor = new WPI_VictorSPX(RobotPorts::kLiftChannel);
 #else
@@ -147,6 +147,15 @@ LiftEndEffector::LiftEndEffector() {
 
 }
 
+void LiftEndEffector::launchLifterThread() {
+#if defined(__linux__)
+  std::thread lifterThread(LifterThread);
+  lifterThread.detach();
+#else
+  wpi::errs() << "Lifter Thread only available on Linux.\n";
+  wpi::errs().flush();
+#endif
+}
 void LiftEndEffector::liftTimerReset() { liftTimer->Reset(); }
 
 void LiftEndEffector::liftTimerStart() { liftTimer->Start(); }
