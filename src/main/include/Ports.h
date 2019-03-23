@@ -8,7 +8,7 @@
 #define SRC_PORTS_H_
 
 //#define EDV21 1
-#undef EDV21
+#define EDV21
 // Use the USB Camera
 #define USEUSBCAMERA
 // Use the Axis IP Camera
@@ -36,7 +36,7 @@ constexpr int kTippingChannel2   = 17;
 
 // Digital I/O from RoboRIO  --  Be sure the rename these to something more
 // meaningful
-constexpr int kBottomLimSw     = 0;  
+constexpr int kBottomLimSw     = 8;  
 constexpr int kLiftLimSw       = 1;
 constexpr int kBallIntakeLimSw = 2;
 constexpr int kElevatorLimSw   = 3;

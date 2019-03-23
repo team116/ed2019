@@ -189,7 +189,7 @@ void OI::processElevator() {
   // Going up
   if (elevatorY < -0.2) {
     // Move up
-    tipper->tipClimb(1.0, OI::disableLiftSensor);
+    tipper->tipClimb(1.0, OI::disableTipperSensor);
   }
 
   // Going down
@@ -257,7 +257,7 @@ void OI::processManualLift(int buttonBox1Buttons, int buttonBox2Buttons) {
   if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel2, OIPorts::kLifterDown)) {
     OI::moveLifterUp = true;
     OI::moveLifterDown = false;
-    lift->manualLiftDown();
+    lift->manualLiftDown(disableBottomSensor);
   }
 
   if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel2, OIPorts::kLifterDown)) {
@@ -283,7 +283,7 @@ void OI::processManualLift(int buttonBox1Buttons, int buttonBox2Buttons) {
   if (ds.GetStickButtonPressed(OIPorts::kXboxChannel, OIPorts::kXboxAButton)) {
     OI::moveLifterDown = true;
     OI::moveLifterUp = false;
-    lift->manualLiftDown();
+    lift->manualLiftDown(disableBottomSensor);
   }
 
   if (ds.GetStickButtonReleased(OIPorts::kXboxChannel, OIPorts::kXboxAButton)) {

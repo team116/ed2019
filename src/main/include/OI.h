@@ -97,8 +97,7 @@ class OI {
 
   static OI *getInstance();
   void process();
-  void upOrDown(LiftEndEffector::liftPosition currentPos,
-                LiftEndEffector::liftPosition newPos);
+  void upOrDown(LiftEndEffector::liftPosition currentPos, LiftEndEffector::liftPosition newPos);
   void processRoller(int buttonBox2Buttons);
   void processLifter();
   void processElevator();

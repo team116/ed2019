@@ -51,7 +51,7 @@ class LiftEndEffector {
   void liftUp(int numSwitches);
   void liftDown(int numSwitches);
   void manualLiftUp();
-  void manualLiftDown();
+  void manualLiftDown(bool disableSensor);
   void manualLiftStop();
   void bottomPos(int numSwitches);
   void liftTimerReset();

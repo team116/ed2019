@@ -53,7 +53,7 @@ static void LifterThread() {
           m_LiftMotor->Set(liftEF->liftMotorSpeed);
         }
         while ((threadLSPlaceHolder->Get()) && !(liftTimeOut)) {
-//        while ((debounceSwitch->get()) && !(liftTimeOut)) {
+          //        while ((debounceSwitch->get()) && !(liftTimeOut)) {
           //  Get() is true is switch is not pushed
           frc::Wait(0.2);  // check every .2 seconds
           if (liftTimer->Get() >
@@ -63,30 +63,29 @@ static void LifterThread() {
             liftEF->manualLiftStop();  // We got abort so stop the lift
             break;
           }
-          }
-          if (!liftTimeOut) {
-            liftEF->numClicks--;
-            if (liftEF->currentDirection == LiftEndEffector::direction::UP) {
-              // lift gowing up
-              liftEF->liftPos = (enum LiftEndEffector::liftPosition)(liftEF->liftPos + 1);
-              printf("Going Up Pos = %d\n", liftEF->liftPos);
-            } else {
-              if (liftEF->currentDirection == LiftEndEffector::direction::DOWN) {
-                // lift gowing down
-                liftEF->liftPos =
-                    (enum LiftEndEffector::liftPosition)(liftEF->liftPos - 1);
-                printf("Going DN Pos = %d\n", liftEF->liftPos);
-              }
-            }
+        }
+        if (!liftTimeOut) {
+          liftEF->numClicks--;
+          if (liftEF->currentDirection == LiftEndEffector::direction::UP) {
+            // lift gowing up
+            liftEF->liftPos = (enum LiftEndEffector::liftPosition)(liftEF->liftPos + 1);
+            printf("Going Up Pos = %d\n", liftEF->liftPos);
           } else {
-            liftTimeOut = true;
-            liftEF->liftIsActive = false;
-            liftTimer->Stop();
-            liftEF->manualLiftStop();  //  make sure the lift is stopped
-            printf("Timeout NumClicks = %d\n", liftEF->numClicks);
-            liftEF->numClicks = 0;
-            break;  // Break out of the numClicks loop
+            if (liftEF->currentDirection == LiftEndEffector::direction::DOWN) {
+              // lift gowing down
+              liftEF->liftPos = (enum LiftEndEffector::liftPosition)(liftEF->liftPos - 1);
+              printf("Going DN Pos = %d\n", liftEF->liftPos);
+            }
           }
+        } else {
+          liftTimeOut = true;
+          liftEF->liftIsActive = false;
+          liftTimer->Stop();
+          liftEF->manualLiftStop();  //  make sure the lift is stopped
+          printf("Timeout NumClicks = %d\n", liftEF->numClicks);
+          liftEF->numClicks = 0;
+          break;  // Break out of the numClicks loop
+        }
       }
       if (!liftTimeOut) {
         movementComplete = true;
@@ -144,7 +143,6 @@ LiftEndEffector::LiftEndEffector() {
 #else
   m_LiftMotor = new WPI_TalonSRX(RobotPorts::kLiftChannel);
 #endif
-
 }
 
 void LiftEndEffector::launchLifterThread() {
@@ -194,8 +192,16 @@ void LiftEndEffector::manualLiftUp() {
   printf("Liftup\n");
 }
 
-void LiftEndEffector::manualLiftDown() {
-  m_LiftMotor->Set(liftEF->liftMotorSpeed);
+void LiftEndEffector::manualLiftDown(bool disableSensor) {
+  if (disableSensor) {
+    m_LiftMotor->Set(liftEF->liftMotorSpeed);
+  } else {
+    if (LiftEndEffector::bottomLS->Get()) {
+      m_LiftMotor->Set(liftEF->liftMotorSpeed);
+    } else {
+      m_LiftMotor->Set(0.0);
+    }
+  }
   printf("LiftDown\n");
 }
 

@@ -22,11 +22,14 @@ TipperEndEffector::TipperEndEffector() {
 }
 
 void TipperEndEffector::tipClimb(double speed, bool disableSensor) {
-  m_TipperMotor.Set(speed);
   if (!disableSensor) {
-    while (!(elevatorLS->Get())) {
+    m_TipperMotor.Set(speed);
+    while (elevatorLS->Get()) {
       frc::Wait(0.2);  // check every .2 seconds
     }
+    m_TipperMotor.Set(0.0);
+  } else {
+    m_TipperMotor.Set(speed);
   }
 }
 
