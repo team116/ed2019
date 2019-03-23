@@ -44,13 +44,15 @@ void TipperEndEffector::tipOff() {
   Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kOff);
 }
 void TipperEndEffector::tipDeploy() {
-  Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kReverse);
-  Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kReverse);
+  Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kForward);
+  Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kForward);
+  printf("In tipDeploy\n");
 }
 
 void TipperEndEffector::tipRetract() {
-  Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kForward);
-  Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kForward);
+  Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kReverse);
+  Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kReverse);
+  printf("In tipRetract\n");
 }
 
 TipperEndEffector* TipperEndEffector::getInstance() {

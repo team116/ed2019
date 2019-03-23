@@ -189,13 +189,13 @@ void OI::processElevator() {
   // Going up
   if (elevatorY < -0.2) {
     // Move up
-    tipper->tipClimb(1.0, OI::disableTipperSensor);
+    tipper->tipLower(1.0);
   }
 
   // Going down
   if (elevatorY > 0.2) {
     // Move down
-    tipper->tipLower(1.0);
+    tipper->tipClimb(1.0, OI::disableTipperSensor);
   }
 
   // stop the elevator motor
@@ -227,14 +227,17 @@ void OI::processHatch() {
 
 //********************************** Robot Tipper  ***********************************
 void OI::processTipper() {
-  if (ds.GetStickButtonPressed(OIPorts::kJoystickChannel1, OIPorts::kRobotTipOver)) {
+
+  if (ds.GetStickButton(OIPorts::kJoystickChannel1, OIPorts::kRobotTipOver)) {
     OI::robotTip = true;
     OI::tipper->tipDeploy();
+    printf("Tipper Deployed\n");
   }
 
   if (ds.GetStickButtonReleased(OIPorts::kJoystickChannel1, OIPorts::kRobotTipOver)) {
     OI::robotTip = false;
     OI::tipper->tipRetract();
+    printf("Tipper Retract\n");
   }
 }
 //******************************* END Robot Tipper  *********************************
