@@ -37,9 +37,9 @@ constexpr int kTippingChannel2   = 17;
 // Digital I/O from RoboRIO  --  Be sure the rename these to something more
 // meaningful
 constexpr int kBottomLimSw     = 8;  
-constexpr int kLiftLimSw       = 1;
-constexpr int kBallIntakeLimSw = 2;
-constexpr int kElevatorLimSw   = 3;
+constexpr int kLiftLimSw       = 6;
+constexpr int kBallIntakeLimSw = 7;
+constexpr int kElevatorLimSw   = 5;
 constexpr int kDIOChannel4     = 4;
 constexpr int kDIOChannel5     = 5;
 constexpr int kDIOChannel6     = 6;

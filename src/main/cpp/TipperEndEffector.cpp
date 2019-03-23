@@ -17,14 +17,13 @@ TipperEndEffector::TipperEndEffector() {
   Tipper1EjectorSolenoid.Set(frc::DoubleSolenoid::kOff);
   Tipper2EjectorSolenoid.Set(frc::DoubleSolenoid::kOff);
   m_TipperMotor2.Follow(m_TipperMotor);
-  TipperEndEffector::elevatorLS =
-      new frc::DigitalInput(RobotPorts::kElevatorLimSw);
+  TipperEndEffector::elevatorLS = new frc::DigitalInput(RobotPorts::kElevatorLimSw);
 }
 
 void TipperEndEffector::tipClimb(double speed, bool disableSensor) {
   if (!disableSensor) {
-    m_TipperMotor.Set(speed);
-    while (elevatorLS->Get()) {
+    while (!elevatorLS->Get()) {   // Switch is closed normally and open at the top
+      m_TipperMotor.Set(speed);
       frc::Wait(0.2);  // check every .2 seconds
     }
     m_TipperMotor.Set(0.0);
@@ -33,9 +32,7 @@ void TipperEndEffector::tipClimb(double speed, bool disableSensor) {
   }
 }
 
-void TipperEndEffector::tipLower(double speed) { 
-  m_TipperMotor.Set(-speed); 
-  }
+void TipperEndEffector::tipLower(double speed) { m_TipperMotor.Set(-speed); }
 
 void TipperEndEffector::tipStop() { m_TipperMotor.Set(0.0); }
 
