@@ -22,11 +22,18 @@ TipperEndEffector::TipperEndEffector() {
 
 void TipperEndEffector::tipClimb(double speed, bool disableSensor) {
   if (!disableSensor) {
+    if (elevatorLS->Get()) {
+      m_TipperMotor.Set(0.0);
+    } else {
+      m_TipperMotor.Set(speed);
+    }
+    /*
     while (!elevatorLS->Get()) {   // Switch is closed normally and open at the top
       m_TipperMotor.Set(speed);
       frc::Wait(0.2);  // check every .2 seconds
     }
     m_TipperMotor.Set(0.0);
+    */
   } else {
     m_TipperMotor.Set(speed);
   }
